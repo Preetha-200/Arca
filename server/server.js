@@ -3,9 +3,31 @@ const cors    = require("cors");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
+const ALLOWED_ORIGINS = [
+  "https://arca-seven-coral.vercel.app",  // Production Vercel frontend
+  "http://localhost:5173",                 // Vite dev server (default port)
+  "http://localhost:3000",                 // alternate local port
+  /^https:\/\/arca.*\.vercel\.app$/,       // Any Vercel preview deploy
+];
+
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow server-to-server / curl / Postman (no origin)
+      if (!origin) return callback(null, true);
+      const allowed = ALLOWED_ORIGINS.some((o) =>
+        typeof o === "string" ? o === origin : o.test(origin)
+      );
+      if (allowed) return callback(null, true);
+      callback(new Error(`CORS: origin not allowed — ${origin}`));
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 /* ──────────────────────────────────────────────────────────────────

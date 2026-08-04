@@ -8,6 +8,7 @@ import {
 } from "firebase/firestore";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
+import API_BASE from "../../api";
 
 const CONSULTATION_TYPES = [
     "Living Room",
@@ -155,7 +156,7 @@ const Index = () => {
        ───────────────────────────────────────────────────────────── */
     const sendOtp = async () => {
         try {
-            const res  = await fetch("http://localhost:5000/send-otp", {
+            const res  = await fetch(`${API_BASE}/send-otp`, {
                 method:  "POST",
                 headers: { "Content-Type": "application/json" },
                 body:    JSON.stringify({ email }),
@@ -175,7 +176,7 @@ const Index = () => {
 
     const verifyOtp = async () => {
         try {
-            const res  = await fetch("http://localhost:5000/verify-otp", {
+            const res  = await fetch(`${API_BASE}/verify-otp`, {
                 method:  "POST",
                 headers: { "Content-Type": "application/json" },
                 body:    JSON.stringify({ email, otp }),
@@ -232,7 +233,7 @@ const Index = () => {
             const currentUser = auth.currentUser;
             const isLoggedIn  = !!currentUser;
 
-            const response = await fetch("http://localhost:5000/book-consultancy", {
+            const response = await fetch(`${API_BASE}/book-consultancy`, {
                 method:  "POST",
                 headers: { "Content-Type": "application/json" },
                 body:    JSON.stringify({
@@ -316,7 +317,7 @@ const Index = () => {
             }
         } catch (error) {
             console.error(error);
-            alert("Could not connect to server. Please ensure the server is running.");
+            alert("Booking failed. Please try again.");
         }
 
         setLoading(false);

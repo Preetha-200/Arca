@@ -1,0 +1,530 @@
+/* ═══════════════════════════════════════════════════════════════════
+   bookings.css  –  ARCA Consultation Dashboard
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ──────────────────────────────────────────────────────────────────
+   Page Layout
+   ────────────────────────────────────────────────────────────────── */
+
+.bk-page {
+  min-height: 100vh;
+  background: #faf8f8;
+  display: flex;
+  flex-direction: column;
+}
+
+.bk-content {
+  flex: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Page Header
+   ────────────────────────────────────────────────────────────────── */
+
+.bk-page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #ecdcdc;
+}
+
+.bk-page-title {
+  font-family: "Bellefair", serif;
+  font-size: 32px;
+  color: #1a0505;
+  margin: 0;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.bk-page-subtitle {
+  display: none; /* shown on larger screens */
+  font-size: 14px;
+  color: #aaa;
+  margin: 0;
+}
+
+.bk-new-btn {
+  background: #470606;
+  color: #fff;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 6px;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.bk-new-btn:hover {
+  background: #6b0a0a;
+  transform: translateY(-1px);
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Section Labels
+   ────────────────────────────────────────────────────────────────── */
+
+.bk-section-label {
+  font-family: "Belleza", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #aaa;
+  margin: 0 0 18px 0;
+}
+
+.bk-hero-section {
+  margin-bottom: 52px;
+}
+
+.bk-history-section {
+  margin-bottom: 40px;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Status Badges
+   ────────────────────────────────────────────────────────────────── */
+
+.bk-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-family: "Belleza", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.bk-badge-confirmed   { background: #e8f5e9; color: #2e7d32; }
+.bk-badge-upcoming    { background: #e8f0fe; color: #1a73e8; }
+.bk-badge-completed   { background: #f0f0f0; color: #666; }
+.bk-badge-rescheduled { background: #fff8e1; color: #f9a825; }
+.bk-badge-cancelled   { background: #fce8e8; color: #c62828; }
+
+/* ──────────────────────────────────────────────────────────────────
+   Hero Booking Card
+   ────────────────────────────────────────────────────────────────── */
+
+.bhc-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 36px 40px;
+  box-shadow: 0 4px 30px rgba(71, 6, 6, 0.09), 0 1px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0e0e0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative left accent */
+.bhc-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #470606 0%, #9b1a1a 100%);
+  border-radius: 4px 0 0 4px;
+}
+
+.bhc-top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.bhc-countdown {
+  font-family: "Belleza", sans-serif;
+  font-size: 13px;
+  color: #470606;
+  background: #fdf4f4;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #f0d0d0;
+}
+
+.bhc-title {
+  font-family: "Bellefair", serif;
+  font-size: 26px;
+  color: #1a0505;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.bhc-booking-id {
+  font-family: "Belleza", sans-serif;
+  font-size: 12px;
+  color: #bbb;
+  margin: 0 0 28px 0;
+  letter-spacing: 0.5px;
+}
+
+/* ── Meta Grid ── */
+.bhc-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 32px;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #faf7f7;
+  border-radius: 10px;
+  border: 1px solid #f5eaea;
+}
+
+.bhc-meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.bhc-meta-icon {
+  font-size: 18px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.bhc-meta-label {
+  font-family: "Belleza", sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #aaa;
+  margin: 0 0 3px 0;
+}
+
+.bhc-meta-value {
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ── Hero Actions ── */
+.bhc-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bhc-view-btn {
+  padding: 12px 26px;
+  border: 1.5px solid #470606;
+  border-radius: 6px;
+  background: transparent;
+  color: #470606;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bhc-view-btn:hover {
+  background: #470606;
+  color: #fff;
+}
+
+.bhc-join-btn {
+  padding: 12px 26px;
+  border: none;
+  border-radius: 6px;
+  background: #470606;
+  color: #fff;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.bhc-join-btn:hover:not(.bhc-join-disabled) {
+  background: #6b0a0a;
+  transform: translateY(-1px);
+}
+
+.bhc-join-btn.bhc-join-disabled {
+  background: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.bhc-join-note {
+  margin: 12px 0 0 0;
+  font-family: "Belleza", sans-serif;
+  font-size: 12px;
+  color: #aaa;
+  width: 100%;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   History Grid
+   ────────────────────────────────────────────────────────────────── */
+
+.bk-history-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Small Booking Card
+   ────────────────────────────────────────────────────────────────── */
+
+.bk-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #f0e0e0;
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.bk-card:hover {
+  box-shadow: 0 6px 24px rgba(71, 6, 6, 0.08);
+  transform: translateY(-2px);
+}
+
+.bk-card-thumb {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.bk-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bk-card-body {
+  flex: 1;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bk-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bk-card-title {
+  font-family: "Bellefair", serif;
+  font-size: 17px;
+  color: #1a0505;
+  margin: 0;
+}
+
+.bk-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.bk-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Belleza", sans-serif;
+  font-size: 13px;
+  color: #666;
+}
+
+.bk-meta-row span:first-child {
+  font-size: 14px;
+  width: 18px;
+}
+
+.bk-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.bk-view-btn {
+  padding: 8px 18px;
+  border: 1.5px solid #470606;
+  border-radius: 5px;
+  background: transparent;
+  color: #470606;
+  font-family: "Belleza", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bk-view-btn:hover {
+  background: #470606;
+  color: #fff;
+}
+
+.bk-rebook-btn {
+  padding: 8px 18px;
+  border: 1.5px solid #e0d0d0;
+  border-radius: 5px;
+  background: #faf7f7;
+  color: #666;
+  font-family: "Belleza", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bk-rebook-btn:hover {
+  border-color: #470606;
+  color: #470606;
+  background: #fff;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Empty State
+   ────────────────────────────────────────────────────────────────── */
+
+.bk-empty {
+  text-align: center;
+  padding: 80px 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.bk-empty-icon {
+  font-size: 56px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.bk-empty h3 {
+  font-family: "Bellefair", serif;
+  font-size: 24px;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.bk-empty p {
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #888;
+  line-height: 1.7;
+  margin: 0 0 28px 0;
+}
+
+.bk-book-btn {
+  background: #470606;
+  color: #fff;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 6px;
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bk-book-btn:hover { background: #6b0a0a; }
+
+/* ──────────────────────────────────────────────────────────────────
+   Loading
+   ────────────────────────────────────────────────────────────────── */
+
+.bk-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 24px;
+  gap: 16px;
+  color: #aaa;
+  font-family: "Belleza", sans-serif;
+}
+
+.bk-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #f0e0e0;
+  border-top-color: #470606;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 768px) {
+  .bk-page-subtitle { display: block; }
+
+  .bk-history-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .bhc-meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .bk-content { padding: 24px 16px 60px; }
+
+  .bk-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .bk-page-title { font-size: 24px; }
+
+  .bhc-card { padding: 22px 18px; }
+
+  .bhc-title { font-size: 20px; }
+
+  .bhc-meta-grid {
+    grid-template-columns: 1fr 1fr;
+    padding: 16px;
+    gap: 14px 16px;
+  }
+
+  .bhc-meta-value { font-size: 13px; }
+
+  .bk-card { flex-direction: column; }
+
+  .bk-card-thumb {
+    width: 100%;
+    height: 120px;
+  }
+
+  .bk-history-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 400px) {
+  .bhc-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}

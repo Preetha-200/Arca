@@ -1,0 +1,185 @@
+.orders-root {
+  width: 100%;
+  min-height: 100vh;
+  background: #f4f4f4;
+  font-family: "Belleza", sans-serif;
+}
+
+.orders-main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 50px 30px 80px;
+}
+
+.orders-page-header {
+  margin-bottom: 40px;
+}
+
+.orders-page-header h1 {
+  font-family: "Bellefair", serif;
+  font-size: 38px;
+  font-weight: normal;
+  color: #470606;
+  letter-spacing: 4px;
+}
+
+.orders-page-header p {
+  font-size: 15px;
+  color: #888;
+  margin-top: 6px;
+}
+
+/* ── Sections ── */
+.orders-section {
+  margin-bottom: 50px;
+}
+
+.orders-section-title {
+  font-family: "Bellefair", serif;
+  font-size: 22px;
+  font-weight: normal;
+  color: #333;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ecdcdc;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Order Card ── */
+.order-card {
+  background: white;
+  border-radius: 12px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.order-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-id {
+  font-size: 15px;
+  color: #222;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.order-date {
+  font-size: 13px;
+  color: #999;
+}
+
+.order-status-badge {
+  padding: 5px 14px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* ── Item Thumbnails ── */
+.order-items-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.order-item-thumb {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  background: #faf7f7;
+  border-radius: 8px;
+}
+
+.order-item-thumb img {
+  width: 70px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.order-item-thumb-info p {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 3px;
+}
+
+.order-item-thumb-info span {
+  font-size: 12px;
+  color: #888;
+}
+
+/* ── Card Bottom ── */
+.order-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 14px;
+}
+
+.order-items-count {
+  font-size: 13px;
+  color: #888;
+}
+
+.order-total {
+  font-size: 16px;
+  color: #222;
+  font-weight: 500;
+}
+
+/* ── Consultancy Card ── */
+.consultancy-card { }
+
+.consultancy-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #faf7f7;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.consultancy-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #555;
+}
+
+.consultancy-detail-row strong {
+  color: #222;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .orders-main { padding: 30px 16px 60px; }
+  .orders-page-header h1 { font-size: 26px; }
+
+  .order-card { padding: 18px 16px; }
+
+  .order-card-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+  .order-card-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+}

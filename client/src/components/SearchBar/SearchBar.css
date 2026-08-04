@@ -1,0 +1,682 @@
+/* ═══════════════════════════════════════════════════════════════════
+   SearchBar.css  –  ARCA Smart Search System
+   All search-related styles: bar, dropdown, overlay
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ──────────────────────────────────────────────────────────────────
+   1. Desktop Search Bar Wrapper
+   ────────────────────────────────────────────────────────────────── */
+
+.searchbar-wrapper {
+  position: relative;
+  width: 48%;
+  max-width: 640px;
+  min-width: 260px;
+  z-index: 500;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   2. Input Row
+   ────────────────────────────────────────────────────────────────── */
+
+.searchbar-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f5f1f1;
+  border: 1.5px solid transparent;
+  border-radius: 30px;
+  padding: 0 16px;
+  height: 44px;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.searchbar-input-row:hover {
+  background: #f0eaea;
+  border-color: #e0cccc;
+}
+
+.searchbar-input-focused,
+.searchbar-input-row:focus-within {
+  background: #fff;
+  border-color: #470606 !important;
+  box-shadow: 0 0 0 3px rgba(71, 6, 6, 0.08);
+}
+
+/* ── Search glass icon ── */
+.searchbar-icon {
+  display: flex;
+  align-items: center;
+  color: #999;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.searchbar-input-focused .searchbar-icon,
+.searchbar-input-row:focus-within .searchbar-icon {
+  color: #470606;
+}
+
+/* ── Text input ── */
+.searchbar-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #222;
+  letter-spacing: 0.02em;
+}
+
+.searchbar-input::placeholder {
+  color: #bbb;
+  font-size: 13.5px;
+}
+
+/* ── Clear button (×) ── */
+.searchbar-clear-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #bbb;
+  cursor: pointer;
+  padding: 0 2px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.searchbar-clear-btn:hover { color: #470606; }
+
+/* ──────────────────────────────────────────────────────────────────
+   3. Dropdown Panel
+   ────────────────────────────────────────────────────────────────── */
+
+.sd-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #f0e0e0;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(71, 6, 6, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+  overflow-y: auto;
+  max-height: 520px;
+  animation: sdFadeSlide 0.18s ease-out both;
+  z-index: 600;
+}
+
+/* Scroll bar styling */
+.sd-panel::-webkit-scrollbar { width: 4px; }
+.sd-panel::-webkit-scrollbar-track { background: transparent; }
+.sd-panel::-webkit-scrollbar-thumb { background: #e8d8d8; border-radius: 4px; }
+
+@keyframes sdFadeSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section wrapper ── */
+.sd-section {
+  padding: 14px 16px 0;
+}
+
+.sd-section:last-child {
+  padding-bottom: 14px;
+}
+
+.sd-section + .sd-section {
+  border-top: 1px solid #f5f0f0;
+  margin-top: 4px;
+}
+
+/* ── Section title row ── */
+.sd-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10.5px;
+  font-family: "Belleza", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #bbb;
+  margin-bottom: 8px;
+}
+
+/* ── Clear All button ── */
+.sd-clear-btn {
+  background: none;
+  border: none;
+  font-family: "Belleza", sans-serif;
+  font-size: 11px;
+  color: #470606;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  letter-spacing: 0.04em;
+}
+
+.sd-clear-btn:hover { opacity: 0.7; }
+
+/* ──────────────────────────────────────────────────────────────────
+   4. Dropdown Row (shared for history, trending, products)
+   ────────────────────────────────────────────────────────────────── */
+
+.sd-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+
+.sd-row:hover,
+.sd-row.sd-focused {
+  background: #faf5f5;
+}
+
+/* Icon column */
+.sd-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.sd-icon-history {
+  background: #f0e8e8;
+  color: #888;
+  font-size: 16px;
+}
+
+.sd-icon-trending {
+  background: #fdf5f0;
+  color: #c0603c;
+  font-size: 13px;
+}
+
+/* Row text */
+.sd-row-text {
+  flex: 1;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Remove button */
+.sd-remove-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #ccc;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.sd-remove-btn:hover { color: #470606; }
+
+/* ──────────────────────────────────────────────────────────────────
+   5. Trending – 2-column grid
+   ────────────────────────────────────────────────────────────────── */
+
+.sd-trending-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 8px;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   6. Category Chips
+   ────────────────────────────────────────────────────────────────── */
+
+.sd-category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sd-category-chip {
+  padding: 6px 15px;
+  border: 1.5px solid #e8dcdc;
+  border-radius: 20px;
+  background: #fff;
+  font-family: "Belleza", sans-serif;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.03em;
+}
+
+.sd-category-chip:hover,
+.sd-category-chip.sd-focused {
+  background: #470606;
+  border-color: #470606;
+  color: #fff;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   7. Product Rows in Dropdown
+   ────────────────────────────────────────────────────────────────── */
+
+.sd-product-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+
+.sd-product-row:hover,
+.sd-product-row.sd-focused {
+  background: #faf5f5;
+}
+
+.sd-product-thumb {
+  width: 52px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid #f0e8e8;
+}
+
+.sd-product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sd-product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sd-product-name {
+  font-family: "Belleza", sans-serif;
+  font-size: 13.5px;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sd-product-meta {
+  font-size: 11.5px;
+  color: #aaa;
+}
+
+.sd-product-price {
+  font-family: "Belleza", sans-serif;
+  font-size: 13px;
+  color: #470606;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   8. Empty state (no results)
+   ────────────────────────────────────────────────────────────────── */
+
+.sd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 36px 20px;
+  color: #888;
+  text-align: center;
+}
+
+.sd-empty span:first-child { font-size: 28px; }
+
+.sd-empty p {
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #555;
+}
+
+.sd-empty-hint {
+  font-size: 12px;
+  color: #bbb;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   9. Mobile Search Icon (shown < 768px, hidden otherwise)
+   ────────────────────────────────────────────────────────────────── */
+
+.searchbar-mobile-icon {
+  display: none; /* shown only on mobile via media query below */
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f1f1;
+  color: #555;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.searchbar-mobile-icon:hover {
+  background: #ecdcdc;
+  color: #470606;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   10. Mobile Search Overlay
+   ────────────────────────────────────────────────────────────────── */
+
+.so-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  animation: soSlideIn 0.2s ease-out both;
+}
+
+@keyframes soSlideIn {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Top bar ── */
+.so-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0e0e0;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.so-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f5f1f1;
+  border: 1.5px solid transparent;
+  border-radius: 26px;
+  padding: 0 14px;
+  height: 44px;
+  transition: border-color 0.2s;
+}
+
+.so-input-wrap:focus-within {
+  background: #fff;
+  border-color: #470606;
+}
+
+.so-icon {
+  color: #999;
+  display: flex;
+  align-items: center;
+}
+
+.so-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #222;
+}
+
+.so-input::placeholder { color: #bbb; }
+
+.so-clear {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #bbb;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.so-clear:hover { color: #470606; }
+
+.so-cancel {
+  background: none;
+  border: none;
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #470606;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 4px 0;
+  letter-spacing: 0.02em;
+}
+
+/* ── Body ── */
+.so-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0 40px;
+}
+
+.so-section {
+  padding: 14px 18px 6px;
+}
+
+.so-section + .so-section {
+  border-top: 1px solid #f5f0f0;
+}
+
+.so-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.so-section-title {
+  font-family: "Belleza", sans-serif;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #bbb;
+  margin-bottom: 8px;
+}
+
+.so-clear-all {
+  background: none;
+  border: none;
+  font-family: "Belleza", sans-serif;
+  font-size: 12px;
+  color: #470606;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* ── History row ── */
+.so-history-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.so-history-row:hover { background: #faf5f5; }
+
+.so-hist-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0e8e8;
+  border-radius: 50%;
+  color: #888;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.so-history-row span:nth-child(2) {
+  flex: 1;
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #333;
+}
+
+.so-remove {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #ccc;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.so-remove:hover { color: #470606; }
+
+/* ── Chips ── */
+.so-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.so-chip {
+  padding: 8px 16px;
+  border: 1.5px solid #e8dcdc;
+  border-radius: 20px;
+  background: #fff;
+  font-family: "Belleza", sans-serif;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.so-chip:hover {
+  background: #470606;
+  border-color: #470606;
+  color: #fff;
+}
+
+.so-chip-trending { color: #c0603c; border-color: #f0ddd5; background: #fdf8f5; }
+.so-chip-trending:hover { background: #470606; border-color: #470606; color: #fff; }
+
+/* ── Product row in overlay ── */
+.so-product-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 4px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.so-product-row:hover { background: #faf5f5; }
+
+.so-product-row img {
+  width: 58px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 7px;
+  border: 1px solid #f0e8e8;
+  flex-shrink: 0;
+}
+
+.so-product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.so-product-info span {
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #222;
+}
+
+.so-product-info small {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.so-product-price {
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #470606;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Empty state in overlay ── */
+.so-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 60px 20px;
+  color: #888;
+  text-align: center;
+}
+
+.so-empty span { font-size: 36px; }
+
+.so-empty p {
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #555;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Responsive breakpoints
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Below 768px: hide desktop bar, show icon ── */
+@media (max-width: 768px) {
+  .searchbar-wrapper    { display: none; }
+  .searchbar-mobile-icon { display: flex; }
+}
+
+/* ── Between 768px and 1024px: slightly narrower bar ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .searchbar-wrapper { width: 42%; }
+}
+
+/* ── Below 480px: overlay full width adjustments ── */
+@media (max-width: 480px) {
+  .so-topbar { padding: 10px 12px; gap: 8px; }
+  .so-section { padding: 12px 14px 4px; }
+}

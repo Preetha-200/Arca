@@ -1,0 +1,81 @@
+# ─── Dependencies ───────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# ─── Build Output ───────────────────────────────────────────────────
+client/dist/
+client/dist-ssr/
+server/dist/
+build/
+
+# ─── Environment Variables ──────────────────────────────────────────
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+server/.env
+client/.env
+client/.env.local
+
+# ─── Firebase / Google Credentials ─────────────────────────────────
+*-firebase-adminsdk-*.json
+firebase-credentials.json
+serviceAccountKey.json
+google-services.json
+GoogleService-Info.plist
+
+# ─── Logs ───────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ─── OS Files ───────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─── Editor & IDE ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-project
+*.sublime-workspace
+
+# ─── Vite ───────────────────────────────────────────────────────────
+client/.vite/
+
+# ─── Testing ────────────────────────────────────────────────────────
+coverage/
+*.lcov
+.nyc_output/
+
+# ─── Misc ───────────────────────────────────────────────────────────
+*.local
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# ─── Word / Office Docs (keep README, ignore temp files) ────────────
+~$*.docx
+~$*.xlsx
+~$*.pptx

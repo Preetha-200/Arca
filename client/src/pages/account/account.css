@@ -1,0 +1,346 @@
+.account-root {
+  width: 100%;
+  min-height: 100vh;
+  background: #f4f4f4;
+  font-family: "Belleza", sans-serif;
+}
+
+/* ── Page Header ── */
+.account-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 50px 30px 80px;
+}
+
+.account-page-header {
+  margin-bottom: 40px;
+}
+
+.account-page-header h1 {
+  font-family: "Bellefair", serif;
+  font-size: 38px;
+  font-weight: normal;
+  color: #470606;
+  letter-spacing: 4px;
+}
+
+.account-page-header p {
+  font-size: 15px;
+  color: #888;
+  margin-top: 6px;
+}
+
+/* ── Two-column layout ── */
+.account-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* ── Avatar Card ── */
+.account-avatar-card {
+  background: white;
+  border-radius: 12px;
+  padding: 35px 20px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-avatar-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #470606;
+  color: white;
+  font-size: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.account-avatar-card h3 {
+  font-family: "Bellefair", serif;
+  font-size: 20px;
+  font-weight: normal;
+  color: #222;
+  margin: 0;
+}
+
+.account-avatar-card p {
+  font-size: 13px;
+  color: #888;
+  word-break: break-word;
+  margin: 0;
+}
+
+.account-quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.account-quick-links button {
+  width: 100%;
+  padding: 11px 16px;
+  background: #f8f3f3;
+  border: 1px solid #ecdcdc;
+  border-radius: 8px;
+  color: #470606;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.account-quick-links button:hover {
+  background: #f0e0e0;
+}
+
+/* ── Form Card ── */
+.account-form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 35px 40px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.account-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account-form-header h2 {
+  font-family: "Bellefair", serif;
+  font-size: 22px;
+  font-weight: normal;
+  color: #333;
+  letter-spacing: 1px;
+}
+
+.account-edit-btn {
+  padding: 9px 22px;
+  background: #f8f3f3;
+  border: 1px solid #ecdcdc;
+  border-radius: 8px;
+  color: #470606;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.account-edit-btn:hover { background: #f0e0e0; }
+
+.account-edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.account-cancel-btn {
+  padding: 9px 20px;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #666;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.account-save-btn {
+  padding: 9px 22px;
+  background: #470606;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.account-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Fields ── */
+.account-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 22px;
+}
+
+.account-field:last-child { border-bottom: none; }
+
+.account-field label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+}
+
+.account-field span {
+  font-size: 15px;
+  color: #222;
+}
+
+.account-field-fixed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-field-note {
+  font-size: 12px;
+  color: #aaa;
+  font-style: normal;
+}
+
+.account-input {
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #C7C7C7;
+  border-radius: 6px;
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #333;
+  outline: none;
+}
+
+.account-input:focus { border-color: #470606; }
+
+.account-mobile-input {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  border: 1px solid #C7C7C7;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.account-country-code {
+  width: 64px;
+  height: 100%;
+  border-right: 1px solid #D6D6D6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.account-input-mobile {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  padding: 0 14px;
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #333;
+}
+
+/* ── Security ── */
+.account-security h2 {
+  font-family: "Bellefair", serif;
+  font-size: 22px;
+  font-weight: normal;
+  color: #333;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.account-security-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 20px;
+}
+
+.account-security-label {
+  font-size: 15px;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.account-security-sub {
+  font-size: 13px;
+  color: #888;
+}
+
+.account-reset-btn {
+  padding: 9px 20px;
+  background: #f8f3f3;
+  border: 1px solid #ecdcdc;
+  border-radius: 8px;
+  color: #470606;
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.account-reset-btn:hover { background: #f0e0e0; }
+.account-reset-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .account-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .account-avatar-card {
+    flex-direction: row;
+    text-align: left;
+    gap: 20px;
+    padding: 25px;
+  }
+
+  .account-avatar-circle { width: 65px; height: 65px; font-size: 28px; }
+
+  .account-quick-links { flex-direction: row; flex-wrap: wrap; }
+  .account-quick-links button { width: auto; flex: 1; text-align: center; }
+}
+
+@media (max-width: 600px) {
+  .account-main { padding: 30px 16px 60px; }
+
+  .account-form-card { padding: 24px 20px; }
+
+  .account-form-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  .account-page-header h1 { font-size: 26px; }
+
+  .account-avatar-card { flex-direction: column; text-align: center; }
+
+  .account-quick-links { flex-direction: column; }
+  .account-quick-links button { width: 100%; text-align: left; }
+
+  .account-security-row { flex-direction: column; align-items: flex-start; }
+}

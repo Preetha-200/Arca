@@ -1,0 +1,509 @@
+/* ═══════════════════════════════════════════════════════════════════
+   about.css  –  ARCA Premium About Page
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ──────────────────────────────────────────────────────────────────
+   Base
+   ────────────────────────────────────────────────────────────────── */
+
+.ab-page {
+  min-height: 100vh;
+  background: #fff;
+  overflow-x: hidden;
+}
+
+/* Shared section wrapper */
+.ab-section {
+  padding: 90px 24px;
+}
+
+.ab-section-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Eyebrow label */
+.ab-eyebrow {
+  font-family: "Belleza", sans-serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #470606;
+  margin: 0 0 14px 0;
+}
+
+.ab-center { text-align: center; }
+
+/* Section headings */
+.ab-section-heading {
+  font-family: "Bellefair", serif;
+  font-size: 38px;
+  font-weight: normal;
+  color: #1a0505;
+  margin: 0 0 36px 0;
+  line-height: 1.2;
+}
+
+/* Body text */
+.ab-body-text {
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #666;
+  line-height: 1.9;
+  margin: 0 0 16px 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   1. Hero
+   ────────────────────────────────────────────────────────────────── */
+
+.ab-hero {
+  position: relative;
+  height: 88vh;
+  min-height: 500px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.ab-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ab-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 2, 2, 0.88) 0%,
+    rgba(10, 2, 2, 0.40) 50%,
+    rgba(10, 2, 2, 0.10) 100%
+  );
+  z-index: 1;
+}
+
+.ab-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 60px 72px;
+  max-width: 860px;
+}
+
+.ab-hero-eyebrow {
+  font-family: "Belleza", sans-serif;
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 18px 0;
+}
+
+.ab-hero-heading {
+  font-family: "Bellefair", serif;
+  font-size: clamp(38px, 7vw, 80px);
+  font-weight: normal;
+  color: #fff;
+  margin: 0 0 20px 0;
+  line-height: 1.1;
+  letter-spacing: 1px;
+}
+
+.ab-hero-sub {
+  font-family: "Belleza", sans-serif;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 520px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   2. Who We Are (two-column)
+   ────────────────────────────────────────────────────────────────── */
+
+.ab-who { background: #faf8f8; }
+
+.ab-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.ab-who-text .ab-section-heading {
+  margin-bottom: 18px;
+}
+
+.ab-pillars {
+  margin: 20px 0 0 0;
+  padding-left: 20px;
+}
+
+.ab-pillars li {
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #555;
+  line-height: 2.1;
+  list-style: none;
+  padding-left: 0;
+}
+
+.ab-pillars li::before {
+  content: "✦ ";
+  color: #470606;
+  font-size: 10px;
+}
+
+.ab-who-image {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(71, 6, 6, 0.12);
+  aspect-ratio: 4/3;
+}
+
+.ab-who-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   3. Process Timeline
+   ────────────────────────────────────────────────────────────────── */
+
+.ab-process { background: #fff; }
+
+.ab-timeline {
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.ab-timeline-item {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.ab-timeline-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ab-timeline-dot {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #470606;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: "Belleza", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(71, 6, 6, 0.25);
+}
+
+.ab-timeline-line {
+  width: 2px;
+  flex: 1;
+  min-height: 48px;
+  background: linear-gradient(to bottom, #ecdcdc, #f5efef);
+  margin: 6px 0;
+}
+
+.ab-timeline-content {
+  padding-bottom: 48px;
+  flex: 1;
+  padding-top: 10px;
+}
+
+.ab-timeline-content h3 {
+  font-family: "Bellefair", serif;
+  font-size: 22px;
+  color: #1a0505;
+  margin: 0 0 8px 0;
+  font-weight: normal;
+}
+
+.ab-timeline-content p {
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #888;
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   4. Why Choose ARCA
+   ────────────────────────────────────────────────────────────────── */
+
+.ab-why { background: #faf8f8; }
+
+.ab-why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.ab-why-card {
+  background: #fff;
+  border: 1px solid #f0e0e0;
+  border-radius: 12px;
+  padding: 28px 24px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.ab-why-card:hover {
+  box-shadow: 0 8px 28px rgba(71, 6, 6, 0.10);
+  transform: translateY(-3px);
+}
+
+.ab-why-icon {
+  font-size: 28px;
+  margin-bottom: 14px;
+}
+
+.ab-why-title {
+  font-family: "Bellefair", serif;
+  font-size: 19px;
+  color: #1a0505;
+  margin: 0 0 8px 0;
+  font-weight: normal;
+}
+
+.ab-why-desc {
+  font-family: "Belleza", sans-serif;
+  font-size: 13.5px;
+  color: #888;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   5. Statistics
+   ────────────────────────────────────────────────────────────────── */
+
+.ab-stats {
+  background: #470606;
+  padding: 70px 24px;
+}
+
+.ab-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ab-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ab-stat-number {
+  font-family: "Bellefair", serif;
+  font-size: 52px;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.ab-stat-label {
+  font-family: "Belleza", sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   6. FAQ Accordion
+   ────────────────────────────────────────────────────────────────── */
+
+.ab-faq-section { background: #fff; }
+
+.ab-faq-inner { max-width: 760px; }
+
+.ab-faq-heading { margin-bottom: 48px; }
+
+.ab-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ab-faq-item {
+  border-bottom: 1px solid #f0e8e8;
+}
+
+.ab-faq-item:first-child {
+  border-top: 1px solid #f0e8e8;
+}
+
+.ab-faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: none;
+  border: none;
+  padding: 20px 0;
+  cursor: pointer;
+  font-family: "Bellefair", serif;
+  font-size: 18px;
+  color: #1a0505;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.ab-faq-item.ab-faq-open .ab-faq-question {
+  color: #470606;
+}
+
+.ab-faq-chevron {
+  font-size: 22px;
+  color: #470606;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.ab-faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.25s ease;
+}
+
+.ab-faq-item.ab-faq-open .ab-faq-answer {
+  max-height: 300px;
+  padding-bottom: 18px;
+}
+
+.ab-faq-answer p {
+  font-family: "Belleza", sans-serif;
+  font-size: 14px;
+  color: #777;
+  line-height: 1.85;
+  margin: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   7. CTA Section
+   ────────────────────────────────────────────────────────────────── */
+
+.ab-cta {
+  background: #1a0505;
+  padding: 100px 24px;
+  text-align: center;
+}
+
+.ab-cta-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.ab-cta-eyebrow {
+  font-family: "Belleza", sans-serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 16px 0;
+}
+
+.ab-cta-heading {
+  font-family: "Bellefair", serif;
+  font-size: 42px;
+  font-weight: normal;
+  color: #fff;
+  margin: 0 0 18px 0;
+  line-height: 1.15;
+}
+
+.ab-cta-sub {
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.7;
+  margin: 0 0 36px 0;
+}
+
+.ab-cta-btn {
+  background: #fff;
+  color: #470606;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 6px;
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ab-cta-btn:hover {
+  background: #f0e0e0;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .ab-why-grid { grid-template-columns: repeat(2, 1fr); }
+  .ab-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .ab-section { padding: 64px 20px; }
+
+  .ab-hero-content { padding: 0 24px 56px; }
+
+  .ab-two-col {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .ab-who-image { order: -1; }
+
+  .ab-section-heading { font-size: 28px; }
+
+  .ab-why-grid { grid-template-columns: 1fr; }
+
+  .ab-stats { padding: 56px 20px; }
+  .ab-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .ab-stat-number { font-size: 40px; }
+
+  .ab-cta { padding: 72px 20px; }
+  .ab-cta-heading { font-size: 30px; }
+}
+
+@media (max-width: 480px) {
+  .ab-hero { height: 70vh; }
+
+  .ab-hero-heading { font-size: 32px; }
+  .ab-hero-sub { font-size: 14px; }
+
+  .ab-stats-grid { grid-template-columns: 1fr 1fr; }
+  .ab-stat-number { font-size: 34px; }
+
+  .ab-faq-question { font-size: 16px; }
+}

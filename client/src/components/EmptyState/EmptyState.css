@@ -1,0 +1,51 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  gap: 16px;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  color: #ccc;
+  line-height: 1;
+}
+
+.empty-state-title {
+  font-family: "Bellefair", serif;
+  font-weight: lighter;
+  font-size: 28px;
+  color: #470606;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.empty-state-message {
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  color: #888;
+  max-width: 360px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.empty-state-btn {
+  margin-top: 8px;
+  padding: 12px 32px;
+  background: #470606;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: "Belleza", sans-serif;
+  font-size: 15px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s;
+}
+
+.empty-state-btn:hover {
+  opacity: 0.85;
+}

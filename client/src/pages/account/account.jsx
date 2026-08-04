@@ -111,9 +111,9 @@ const Account = () => {
                         <p>{user?.email}</p>
 
                         <div className="account-quick-links">
-                            <button onClick={() => navigate("/wishlist")}>♡ Wishlist</button>
-                            <button onClick={() => navigate("/bookings")}>📅 Bookings</button>
-                            <button onClick={() => navigate("/orders")}>≡ Orders</button>
+                            <button onClick={() => navigate("/wishlist")}><span className="material-symbols-outlined" style={{fontSize:"16px",marginRight:"6px"}}>favorite</span>Wishlist</button>
+                            <button onClick={() => navigate("/bookings")}><span className="material-symbols-outlined" style={{fontSize:"16px",marginRight:"6px"}}>calendar_today</span>Bookings</button>
+                            <button onClick={() => navigate("/orders")}><span className="material-symbols-outlined" style={{fontSize:"16px",marginRight:"6px"}}>list</span>Orders</button>
                         </div>
                     </div>
 
@@ -220,7 +220,7 @@ const Account = () => {
                                     onClick={handlePasswordReset}
                                     disabled={resetSent}
                                 >
-                                    {resetSent ? "Sent ✓" : "Reset Password"}
+                                    {resetSent ? "Sent" : "Reset Password"}
                                 </button>
                             </div>
                         </div>

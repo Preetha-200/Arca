@@ -70,7 +70,7 @@ function Navbar() {
                             onClick={() => navigate("/wishlist")}
                             title="Wishlist"
                         >
-                            ♡
+                        <span className="material-symbols-outlined nav-wishlist-icon">favorite</span>
                             {wishlistCount > 0 && (
                                 <span className="nav-badge">{wishlistCount}</span>
                             )}
@@ -118,7 +118,10 @@ function Navbar() {
                         onClick={() => setMobileMenuOpen((v) => !v)}
                         aria-label="Toggle menu"
                     >
-                        {mobileMenuOpen ? "✕" : "☰"}
+                        {mobileMenuOpen
+                            ? <span className="material-symbols-outlined">close</span>
+                            : <span className="material-symbols-outlined">menu</span>
+                        }
                     </button>
                 </div>
             </nav>
@@ -140,7 +143,7 @@ function Navbar() {
                             <span onClick={() => { navigate("/wishlist"); closeAll(); }}>Wishlist</span>
                             <span onClick={() => { navigate("/bookings"); closeAll(); }}>My Bookings</span>
                             <span onClick={() => { navigate("/orders"); closeAll(); }}>Orders</span>
-                            <span className="mobile-logout" onClick={handleLogout}>Logout →</span>
+                            <span className="mobile-logout" onClick={handleLogout}>Logout</span>
                         </>
                     ) : (
                         <span onClick={() => { navigate("/signin"); closeAll(); }}>Sign In</span>
@@ -184,7 +187,7 @@ function Navbar() {
                                 className="logout-drawer-btn"
                                 onClick={handleLogout}
                             >
-                                Logout →
+                                Logout
                             </button>
                         </div>
                     </div>

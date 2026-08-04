@@ -23,7 +23,12 @@ const Toast = ({ message, type = "success", onClose, duration = 3000 }) => {
     return (
         <div className={`toast toast-${type} ${visible ? "toast-in" : "toast-out"}`}>
             <span className="toast-icon">
-                {type === "success" ? "✓" : type === "error" ? "✕" : "ℹ"}
+                {type === "success"
+                    ? <span className="material-symbols-outlined" style={{fontSize:"18px"}}>check_circle</span>
+                    : type === "error"
+                    ? <span className="material-symbols-outlined" style={{fontSize:"18px"}}>cancel</span>
+                    : <span className="material-symbols-outlined" style={{fontSize:"18px"}}>info</span>
+                }
             </span>
             <span className="toast-message">{message}</span>
             <button className="toast-close" onClick={() => { setVisible(false); setTimeout(() => onClose?.(), 350); }}>

@@ -70,7 +70,7 @@ const Orders = () => {
                 ) : orders.length === 0 ? (
                     <>
                         <EmptyState
-                            icon="≡"
+                            icon={<span className="material-symbols-outlined" style={{fontSize:"48px"}}>receipt_long</span>}
                             title="No orders yet"
                             message="Your design orders will appear here after checkout."
                             cta="Browse Designs"
@@ -96,7 +96,7 @@ const Orders = () => {
                                     textDecoration: "underline",
                                 }}
                             >
-                                View My Bookings →
+                                View My Bookings
                             </button>
                         </div>
                     </>

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
  *   ctaPath – route to navigate to on CTA click
  */
 const EmptyState = ({
-    icon = "◇",
+    icon = null,
     title = "Nothing here yet",
     message = "",
     cta = "",

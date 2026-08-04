@@ -91,7 +91,7 @@ const ProductDetails = () => {
                     addedAt:   new Date().toISOString(),
                 });
                 setWishlisted(true);
-                showToast("Added to wishlist ♡", "success");
+                showToast("Added to wishlist", "success");
             }
         } catch (err) {
             console.error(err);
@@ -217,7 +217,10 @@ const ProductDetails = () => {
                             onClick={toggleWishlist}
                             disabled={loadingWL}
                         >
-                            {wishlisted ? "♥ Wishlisted" : "♡ Wishlist"}
+                            {wishlisted
+                                ? <><span className="material-symbols-outlined" style={{fontSize:"16px",marginRight:"4px",verticalAlign:"middle",fontVariationSettings:"'FILL' 1"}}>favorite</span>Wishlisted</>
+                                : <><span className="material-symbols-outlined" style={{fontSize:"16px",marginRight:"4px",verticalAlign:"middle"}}>favorite</span>Wishlist</>
+                            }
                         </button>
 
                         <button className="back" onClick={() => navigate(-1)}>

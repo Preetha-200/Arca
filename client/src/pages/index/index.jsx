@@ -469,9 +469,10 @@ const Index = () => {
                                 {otpSent ? "Resend" : "Send OTP"}
                             </button>
                         )}
-                        {/* Verified tick — logged-in users */}
                         {user && (
-                            <span className="email-verified-tick" title="Verified via Firebase">✓</span>
+                            <span className="email-verified-tick" title="Verified via Firebase">
+                                <span className="material-symbols-outlined" style={{fontSize:"18px",color:"#2e7d32"}}>verified</span>
+                            </span>
                         )}
                     </div>
 
@@ -555,7 +556,7 @@ const Index = () => {
             {showPopup && (
                 <div className="popup-overlay">
                     <div className="popup-box">
-                        <h2>Consultation Booked! 🎉</h2>
+                        <h2>Consultation Booked!</h2>
                         <p>
                             Your consultation has been confirmed.
                             <br />

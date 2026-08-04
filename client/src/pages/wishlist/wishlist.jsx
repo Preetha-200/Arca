@@ -67,7 +67,7 @@ const Wishlist = () => {
                     <Loader fullPage />
                 ) : items.length === 0 ? (
                     <EmptyState
-                        icon="♡"
+                        icon={<span className="material-symbols-outlined" style={{fontSize:"48px"}}>favorite</span>}
                         title="Your wishlist is empty"
                         message="Browse our designs and save your favourites here."
                         cta="Explore Designs"
@@ -108,7 +108,7 @@ const Wishlist = () => {
                                         onClick={() => handleRemove(item.productId)}
                                         title="Remove from wishlist"
                                     >
-                                        ✕ Remove
+                                        <span className="material-symbols-outlined" style={{fontSize:"16px"}}>close</span> Remove
                                     </button>
                                 </div>
                             </div>

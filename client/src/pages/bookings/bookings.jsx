@@ -106,7 +106,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
       <div className="bhc-top-row">
         <StatusBadge status={booking.status} />
         {countdown && countdown !== "Meeting passed" && (
-          <span className="bhc-countdown">⏳ {countdown}</span>
+          <span className="bhc-countdown"><span className="material-symbols-outlined" style={{fontSize:"16px"}}>schedule</span> {countdown}</span>
         )}
       </div>
 
@@ -117,7 +117,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
       {/* Meta grid */}
       <div className="bhc-meta-grid">
         <div className="bhc-meta-item">
-          <span className="bhc-meta-icon">📅</span>
+          <span className="bhc-meta-icon"><span className="material-symbols-outlined">calendar_today</span></span>
           <div>
             <p className="bhc-meta-label">Scheduled Date</p>
             <p className="bhc-meta-value">
@@ -127,7 +127,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
         </div>
 
         <div className="bhc-meta-item">
-          <span className="bhc-meta-icon">⏰</span>
+          <span className="bhc-meta-icon"><span className="material-symbols-outlined">access_time</span></span>
           <div>
             <p className="bhc-meta-label">Meeting Time</p>
             <p className="bhc-meta-value">{booking.scheduledTime || "TBD"} IST</p>
@@ -135,7 +135,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
         </div>
 
         <div className="bhc-meta-item">
-          <span className="bhc-meta-icon">⏱</span>
+          <span className="bhc-meta-icon"><span className="material-symbols-outlined">timelapse</span></span>
           <div>
             <p className="bhc-meta-label">Duration</p>
             <p className="bhc-meta-value">{booking.duration || "60 minutes"}</p>
@@ -143,7 +143,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
         </div>
 
         <div className="bhc-meta-item">
-          <span className="bhc-meta-icon">👤</span>
+          <span className="bhc-meta-icon"><span className="material-symbols-outlined">person</span></span>
           <div>
             <p className="bhc-meta-label">Assigned Designer</p>
             <p className="bhc-meta-value">{booking.designerName || "To be assigned"}</p>
@@ -151,7 +151,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
         </div>
 
         <div className="bhc-meta-item">
-          <span className="bhc-meta-icon">📹</span>
+          <span className="bhc-meta-icon"><span className="material-symbols-outlined">videocam</span></span>
           <div>
             <p className="bhc-meta-label">Meeting Type</p>
             <p className="bhc-meta-value">Google Meet (Virtual)</p>
@@ -159,7 +159,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
         </div>
 
         <div className="bhc-meta-item">
-          <span className="bhc-meta-icon">🏡</span>
+          <span className="bhc-meta-icon"><span className="material-symbols-outlined">chair</span></span>
           <div>
             <p className="bhc-meta-label">Consultation Type</p>
             <p className="bhc-meta-value">{booking.consultationType || "Interior Design"}</p>
@@ -186,7 +186,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
           }
           title={canJoin ? "Join Google Meet" : "Available 5 minutes before the meeting"}
         >
-          {canJoin ? "Join Meeting →" : "🔒 Join Meeting"}
+          {canJoin ? "Join Meeting" : "Join Meeting"}
         </button>
       </div>
 
@@ -232,7 +232,7 @@ const SmallCard = ({ booking, navigate }) => {
 
         <div className="bk-card-meta">
           <div className="bk-meta-row">
-            <span>📅</span>
+            <span className="material-symbols-outlined" style={{fontSize:"16px"}}>calendar_today</span>
             <span>
               <strong>Meeting:</strong>{" "}
               {booking.scheduledDateDisplay || fmtDate(booking.scheduledDate) || "TBD"}
@@ -240,7 +240,7 @@ const SmallCard = ({ booking, navigate }) => {
             </span>
           </div>
           <div className="bk-meta-row">
-            <span>📝</span>
+            <span className="material-symbols-outlined" style={{fontSize:"16px"}}>event_note</span>
             <span>
               <strong>Booked:</strong>{" "}
               {booking.createdAt?.toDate
@@ -251,14 +251,14 @@ const SmallCard = ({ booking, navigate }) => {
             </span>
           </div>
           <div className="bk-meta-row">
-            <span>👤</span>
+            <span className="material-symbols-outlined" style={{fontSize:"16px"}}>person</span>
             <span>
               <strong>Designer:</strong> {booking.designerName || "To be assigned"}
             </span>
           </div>
           {booking.bookingId && (
             <div className="bk-meta-row">
-              <span>🔖</span>
+              <span className="material-symbols-outlined" style={{fontSize:"16px"}}>tag</span>
               <span>
                 <strong>ID:</strong> {booking.bookingId}
               </span>
@@ -292,7 +292,7 @@ const SmallCard = ({ booking, navigate }) => {
 /* ────────────────────────────────────────────────────────────────── */
 const EmptyState = ({ navigate }) => (
   <div className="bk-empty">
-    <div className="bk-empty-icon">🏡</div>
+    <div className="bk-empty-icon"><span className="material-symbols-outlined" style={{fontSize:"48px"}}>chair</span></div>
     <h3>No Consultations Yet</h3>
     <p>
       Book your first interior design consultation and let our experts

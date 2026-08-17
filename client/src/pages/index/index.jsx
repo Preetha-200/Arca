@@ -445,7 +445,7 @@ const Index = () => {
                         )}
                         {user && (
                             <span className="email-verified-tick" title="Verified via Firebase">
-                                <span className="material-symbols-outlined" style={{fontSize:"18px",color:"#2e7d32"}}>verified</span>
+                                <span className="material-symbols-outlined">check_circle</span>
                             </span>
                         )}
                     </div>

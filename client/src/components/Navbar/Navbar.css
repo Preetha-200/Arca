@@ -94,9 +94,27 @@
 
 
 .drawer-header {
+  position: relative;
   text-align: center;
   border-bottom: 1px solid #ddd;
   padding-bottom: 25px;
+}
+
+.drawer-close-btn {
+  position: absolute;
+  top: -15px;
+  right: -5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+.drawer-close-btn:hover {
+  color: #000;
 }
 
 .drawer-profile-circle {
@@ -140,6 +158,20 @@
   cursor: pointer;
   font-size: 17px;
   text-align: left;
+}
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hamburger-btn .material-symbols-outlined {
+  font-size: 28px;
 }
 
 .drawer-options button:hover {

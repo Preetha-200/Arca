@@ -1,5 +1,5 @@
 .signin-page {
-	min-height: 100vh;
+	padding: clamp(40px, 8vh, 80px) 20px;
 	background: #f4f4f4;
 	display: flex;
 	justify-content: center;
@@ -18,11 +18,25 @@
 	gap: 18px;
 }
 
+.signin-logo-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+}
+
+.signin-logo-header img {
+	height: 32px;
+	width: auto;
+}
+
 .signin-card h1 {
 	text-align: center;
 	letter-spacing: clamp(4px, 2vw, 12px);
 	margin-right: calc(-1 * clamp(4px, 2vw, 12px));
 	font-weight: lighter;
+	margin: 0;
+	line-height: 1;
 }
 
 .auth-toggle {
@@ -35,11 +49,18 @@
 	height: 45px;
 	border: none;
 	cursor: pointer;
+	border-radius: 8px;
+	background: #f0f0f0;
+	color: #333;
+	box-shadow: none;
+	font-weight: 500;
+	transition: all 0.2s ease;
 }
 
 .active-tab {
-	background: #470606;
-	color: white;
+	background: white !important;
+	color: #470606 !important;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
 }
 
 .signin-card input {

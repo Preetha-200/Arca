@@ -158,7 +158,10 @@ const SignIn = () => {
 
             <div className="signin-page">
                 <div className="signin-card">
-                    <h1>ARCA</h1>
+                    <div className="signin-logo-header">
+                        <img src="/logo-1.png" alt="ARCA logo" />
+                        <h1>ARCA</h1>
+                    </div>
 
                     {/* ── Tab Toggle ── */}
                     {mode !== "forgot" && (

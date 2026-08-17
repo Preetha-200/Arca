@@ -323,8 +323,7 @@
 
   .account-avatar-circle { width: 65px; height: 65px; font-size: 28px; }
 
-  .account-quick-links { flex-direction: row; flex-wrap: wrap; }
-  .account-quick-links button { width: auto; flex: 1; text-align: center; }
+  .account-quick-links { display: none; }
 }
 
 @media (max-width: 600px) {
@@ -337,9 +336,6 @@
   .account-page-header h1 { font-size: 26px; }
 
   .account-avatar-card { flex-direction: column; text-align: center; }
-
-  .account-quick-links { flex-direction: column; }
-  .account-quick-links button { width: 100%; text-align: left; }
 
   .account-security-row { flex-direction: column; align-items: flex-start; }
 }

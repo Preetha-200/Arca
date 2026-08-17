@@ -149,28 +149,6 @@
   font-weight: 500;
 }
 
-/* ── Consultancy Card ── */
-.consultancy-card { }
-
-.consultancy-details {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: #faf7f7;
-  border-radius: 8px;
-  padding: 14px;
-}
-
-.consultancy-detail-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  color: #555;
-}
-
-.consultancy-detail-row strong {
-  color: #222;
-}
 
 /* ── Responsive ── */
 @media (max-width: 600px) {

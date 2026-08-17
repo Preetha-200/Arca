@@ -37,7 +37,7 @@
 }
 
 .bk-page-title {
-  font-family: "Bellefair", serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 32px;
   color: #1a0505;
   margin: 0;
@@ -58,7 +58,7 @@
   border: none;
   padding: 11px 22px;
   border-radius: 6px;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 14px;
   letter-spacing: 0.5px;
   cursor: pointer;
@@ -76,7 +76,7 @@
    ────────────────────────────────────────────────────────────────── */
 
 .bk-section-label {
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 3px;
@@ -100,7 +100,7 @@
   display: inline-block;
   padding: 5px 14px;
   border-radius: 20px;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 12px;
   letter-spacing: 0.5px;
   font-weight: 600;
@@ -109,7 +109,8 @@
 
 .bk-badge-confirmed   { background: #e8f5e9; color: #2e7d32; }
 .bk-badge-upcoming    { background: #e8f0fe; color: #1a73e8; }
-.bk-badge-completed   { background: #f0f0f0; color: #666; }
+.bk-badge-completed   { background: #e8f5e9; color: #2e7d32; }
+.bk-badge-missed      { background: #fce8e8; color: #c62828; }
 .bk-badge-rescheduled { background: #fff8e1; color: #f9a825; }
 .bk-badge-cancelled   { background: #fce8e8; color: #c62828; }
 
@@ -148,7 +149,7 @@
 }
 
 .bhc-countdown {
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 13px;
   color: #470606;
   background: #fdf4f4;
@@ -158,7 +159,7 @@
 }
 
 .bhc-title {
-  font-family: "Bellefair", serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 26px;
   color: #1a0505;
   margin: 0 0 4px 0;
@@ -166,7 +167,7 @@
 }
 
 .bhc-booking-id {
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 12px;
   color: #bbb;
   margin: 0 0 28px 0;
@@ -199,7 +200,7 @@
 }
 
 .bhc-meta-label {
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -208,7 +209,7 @@
 }
 
 .bhc-meta-value {
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 14px;
   color: #333;
   margin: 0;
@@ -231,7 +232,7 @@
   border-radius: 6px;
   background: transparent;
   color: #470606;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 14px;
   letter-spacing: 0.5px;
   cursor: pointer;
@@ -249,7 +250,7 @@
   border-radius: 6px;
   background: #470606;
   color: #fff;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 14px;
   letter-spacing: 0.5px;
   cursor: pointer;
@@ -269,7 +270,7 @@
 
 .bhc-join-note {
   margin: 12px 0 0 0;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 12px;
   color: #aaa;
   width: 100%;
@@ -335,7 +336,7 @@
 }
 
 .bk-card-title {
-  font-family: "Bellefair", serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 17px;
   color: #1a0505;
   margin: 0;
@@ -351,7 +352,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 13px;
   color: #666;
   overflow-wrap: anywhere;
@@ -375,7 +376,7 @@
   border-radius: 5px;
   background: transparent;
   color: #470606;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
@@ -384,24 +385,6 @@
 .bk-view-btn:hover {
   background: #470606;
   color: #fff;
-}
-
-.bk-rebook-btn {
-  padding: 8px 18px;
-  border: 1.5px solid #e0d0d0;
-  border-radius: 5px;
-  background: #faf7f7;
-  color: #666;
-  font-family: "Belleza", sans-serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.bk-rebook-btn:hover {
-  border-color: #470606;
-  color: #470606;
-  background: #fff;
 }
 
 /* ──────────────────────────────────────────────────────────────────
@@ -429,7 +412,7 @@
 }
 
 .bk-empty p {
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 14px;
   color: #888;
   line-height: 1.7;
@@ -442,7 +425,7 @@
   border: none;
   padding: 14px 32px;
   border-radius: 6px;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 15px;
   letter-spacing: 0.5px;
   cursor: pointer;
@@ -462,7 +445,7 @@
   padding: 80px 24px;
   gap: 16px;
   color: #aaa;
-  font-family: "Belleza", sans-serif;
+  font-family: "Philosopher", sans-serif;
 }
 
 .bk-spinner {

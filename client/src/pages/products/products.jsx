@@ -31,11 +31,6 @@ const Products = () => {
     const { user }     = useAuth();
     const { showToast, ToastContainer } = useToast();
 
-    /* ── Scroll to top on load/category change ── */
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [category]);
-
     /* ── State ── */
     const [search,       setSearch]       = useState("");
     const [sortBy,       setSortBy]       = useState("default");
@@ -44,6 +39,13 @@ const Products = () => {
     const [wishlisted,   setWishlisted]   = useState({}); // { productId: bool }
 
     const allMaterials = useMemo(() => getMaterials(), []);
+
+    /* ── Stable random order per category load ── */
+    const randomOrder = useMemo(() => {
+        const order = {};
+        products.forEach(p => order[p.id] = Math.random());
+        return order;
+    }, [category]);
 
     /* ── Derived product list ── */
     const filtered = useMemo(() => {
@@ -67,11 +69,14 @@ const Products = () => {
         switch (sortBy) {
             case "latest":     list = [...list].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); break;
             case "popular":    list = [...list].sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0)); break;
-            default: break;
+            default:           
+                // Shuffled default order (stable during search/filter)
+                list = [...list].sort((a, b) => randomOrder[a.id] - randomOrder[b.id]); 
+                break;
         }
 
         return list;
-    }, [category, search, filterMat, sortBy]);
+    }, [category, search, filterMat, sortBy, randomOrder]);
 
     /* ── Wishlist toggle ── */
     const toggleWishlist = async (e, product) => {

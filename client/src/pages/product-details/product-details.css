@@ -24,7 +24,6 @@
 .product-details-left img {
   width: 100%;
   height: auto;
-  border-radius: 14px;
   object-fit: cover;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -50,7 +49,7 @@
 
 /* ── Title ── */
 .product-details-right h1 {
-  font-family: "Bellefair", serif;
+  font-family: "Philosopher", sans-serif;
   font-size: 32px;
   font-weight: normal;
   color: #1a0505;
@@ -282,7 +281,13 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 20px;
+}
+
+.pd-related-divider {
+  height: 1px;
+  background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%);
+  margin-bottom: 25px;
+  width: 100%;
 }
 
 .pd-section-title {
@@ -293,11 +298,13 @@
 }
 
 .pd-view-more-link {
+  position: relative;
   font-family: "Belleza", sans-serif;
   font-size: 14px;
   color: #470606;
   cursor: pointer;
   transition: opacity 0.2s;
+  right: 15px;
 }
 
 .pd-view-more-link:hover {
@@ -455,10 +462,20 @@
 }
 
 @media (max-width: 600px) {
-  .product-details { padding: 20px 16px; }
-
-  .product-details-right h1 { font-size: 24px; }
-
+  .product-details { padding: 20px 30px; }
+  .product-details-left{ margin: 0 -30px;}
+  .product-details-right h1 { font-size: 20px; }
+  .pd-section-title {
+    font-size: 26px;
+    font-weight: normal;
+    color: #470606;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
   .pd-related { padding: 0 0 30px 16px; }
   .pd-related-grid { 
     gap: 12px;
@@ -466,21 +483,20 @@
     padding-right: 16px;
   }
   .pd-related-card {
-    flex: 0 0 calc(50vw - 22px);
+    flex: 0 0 calc(60vw - 22px);
     scroll-snap-align: start;
   }
   .pd-related-card img {
-    height: 140px;
+    height: 200px;
   }
   .pd-related-info {
     padding: 8px 10px 4px;
   }
-  .pd-related-info h3 {
-    font-size: 10px;
+  .product-info h2 {
+    font-size: 12px;
     line-height: 1.4;
-    margin-bottom: 4px;
-    font-family: "Belleza", sans-serif;
-    font-weight: 600;
+    font-family: "Philosopher", sans-serif;
+    font-weight: lighter;
   }
   .pd-related-info p {
     font-size: 9px;

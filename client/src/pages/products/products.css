@@ -173,19 +173,6 @@
   color: white;
 }
 
-.filter-range {
-  width: 100%;
-  accent-color: #470606;
-  cursor: pointer;
-}
-
-.filter-range-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: #aaa;
-}
-
 .filter-clear-btn {
   align-self: flex-end;
   padding: 8px 18px;

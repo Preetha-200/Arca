@@ -26,7 +26,6 @@ function Navbar() {
             setShowProfileMenu(false);
             navigate("/");
         } catch (error) {
-            console.log(error);
         }
     };
 

@@ -74,7 +74,10 @@ const fmtDate = (iso) => {
 const StatusBadge = ({ status, hasPassed }) => {
   let displayStatus = status || "Confirmed";
   if ((status === "Confirmed" || status === "confirmed") && hasPassed) {
-    displayStatus = "Over";
+    displayStatus = "Missed";
+  }
+  if (status === "completed" || status === "Completed") {
+    displayStatus = "Completed";
   }
   return (
     <span className={`bk-badge bk-badge-${displayStatus.toLowerCase()}`}>
@@ -122,7 +125,7 @@ const HeroCard = ({ booking, onViewDetails, onComplete }) => {
       </div>
 
       <h2 className="bhc-title">{title}</h2>
-      <p className="bhc-booking-id">Booking ID: {booking.bookingId || "—"}</p>
+      <p className="bhc-booking-id">Booking ID: {booking.id || "—"}</p>
 
       <div className="bhc-meta-grid">
         <div className="bhc-meta-item">
@@ -188,7 +191,12 @@ const HeroCard = ({ booking, onViewDetails, onComplete }) => {
         <button
           className={`bhc-join-btn ${(!canJoin || !booking.meetingUrl) ? "bhc-join-disabled" : ""}`}
           disabled={!canJoin || !booking.meetingUrl}
-          onClick={() => booking.meetingUrl && window.open(booking.meetingUrl, "_blank")}
+          onClick={() => {
+            if (booking.meetingUrl) {
+              window.open(booking.meetingUrl, "_blank");
+              onComplete && onComplete(booking.id, true);
+            }
+          }}
           title={canJoin ? "Join Google Meet" : "Available 5 minutes before the meeting"}
         >
           Join Meeting
@@ -256,11 +264,11 @@ const SmallCard = ({ booking, onViewDetails }) => {
               <strong>Designer:</strong> {isPending ? "Pending" : (booking.designerName || "To be assigned")}
             </span>
           </div>
-          {booking.bookingId && (
+          {booking.id && (
             <div className="bk-meta-row">
               <span className="material-symbols-outlined" style={{fontSize:"16px"}}>tag</span>
               <span>
-                <strong>ID:</strong> {booking.bookingId}
+                <strong>ID:</strong> {booking.id}
               </span>
             </div>
           )}
@@ -295,7 +303,7 @@ const DetailsModal = ({ booking, onClose }) => {
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontSize: '15px', color: '#4B4848' }}>
-          <div><strong>Booking ID:</strong> <br/>{booking.bookingId}</div>
+          <div><strong>Booking ID:</strong> <br/>{booking.id}</div>
           <div><strong>Status:</strong> <br/><StatusBadge status={booking.status} hasPassed={hasPassed} /></div>
           
           <div style={{ gridColumn: '1 / -1', borderTop: '1px dashed #ccc', margin: '10px 0' }}></div>
@@ -399,8 +407,8 @@ const Bookings = () => {
     return () => unsub();
   }, [user]);
 
-  const handleComplete = async (bookingId) => {
-    if (!window.confirm("Are you sure you want to mark this consultation as completed?")) return;
+  const handleComplete = async (bookingId, skipConfirm = false) => {
+    if (!skipConfirm && !window.confirm("Are you sure you want to mark this consultation as completed?")) return;
     
     try {
       const token = await auth.currentUser.getIdToken();
@@ -414,12 +422,12 @@ const Bookings = () => {
       });
       const data = await res.json();
       if (!res.ok) {
-        alert(data.message || "Failed to mark as completed.");
+        if (!skipConfirm) alert(data.message || "Failed to mark as completed.");
       } else {
-        alert("Booking marked as completed.");
+        if (!skipConfirm) alert("Booking marked as completed.");
       }
     } catch (err) {
-      alert("An error occurred. Please try again.");
+      if (!skipConfirm) alert("An error occurred. Please try again.");
     }
   };
 
@@ -429,8 +437,14 @@ const Bookings = () => {
   /* ── Find next upcoming (hero) ── */
   const now    = Date.now();
   const hero   = sorted.find(
-    (b) => (b.status === "Confirmed" || b.status === "Rescheduled") && getMeetingDate(b) && getMeetingDate(b) > now
-  ) || sorted[0];
+    (b) => {
+      const isPast = getMeetingDate(b) && getMeetingDate(b) < now;
+      const isCompleted = b.status === "completed" || b.status === "Completed";
+      const isMissed = isPast && (b.status === "Confirmed" || b.status === "confirmed");
+      const isCancelled = b.status === "cancelled" || b.status === "Cancelled";
+      return !isCompleted && !isMissed && !isCancelled;
+    }
+  );
 
   const history = sorted.filter((b) => b.id !== hero?.id);
 

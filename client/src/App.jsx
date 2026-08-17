@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
 /* ── Pages ── */
 import Index          from "./pages/index/index";
@@ -35,6 +36,7 @@ const AdminRoute = ({ children }) => {
 function App() {
     return (
         <AuthProvider>
+            <ScrollToTop />
             <Routes>
                 {/* ── Public Routes ── */}
                 <Route path="/"                   element={<Index />} />

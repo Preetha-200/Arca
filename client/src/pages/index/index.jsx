@@ -68,6 +68,7 @@ const Index = () => {
     /* ── UI state ── */
     const [loading,          setLoading]          = useState(false);
     const [showPopup,        setShowPopup]        = useState(false);
+    const [showActiveBookingPopup, setShowActiveBookingPopup] = useState(false);
     const [bookingId,        setBookingId]        = useState("");
 
     /* ── Guest-only OTP state ── */
@@ -145,11 +146,62 @@ const Index = () => {
         }
 
         if (scrollToForm) {
-            setTimeout(() => {
-                consultancyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 300);
+            if (user) {
+                const checkActive = async () => {
+                    try {
+                        const q = query(
+                            collection(db, "bookings"),
+                            where("userId", "==", user.uid),
+                            where("status", "in", ["pending", "Pending", "Confirmed", "confirmed", "Rescheduled"])
+                        );
+                        const snap = await getDocs(q);
+                        let hasActive = false;
+                        
+                        const parseTime = (timeStr) => {
+                            if (!timeStr) return { hours: 10, minutes: 0 };
+                            const [timePart, ampm] = timeStr.split(" ");
+                            let [hours, minutes]   = timePart.split(":").map(Number);
+                            if (ampm === "PM" && hours !== 12) hours += 12;
+                            if (ampm === "AM" && hours === 12) hours = 0;
+                            return { hours, minutes };
+                        };
+
+                        snap.forEach(docSnap => {
+                            const b = docSnap.data();
+                            let isMissed = false;
+                            if (b.scheduledDate && b.scheduledTime && (b.status === "Confirmed" || b.status === "confirmed")) {
+                                const { hours, minutes } = parseTime(b.scheduledTime);
+                                const [y, m, d] = b.scheduledDate.split("-").map(Number);
+                                const mTime = new Date(y, m - 1, d, hours, minutes, 0).getTime();
+                                if (Date.now() > mTime) isMissed = true;
+                            }
+                            if (!isMissed) hasActive = true;
+                        });
+
+                        if (hasActive) {
+                            setShowActiveBookingPopup(true);
+                            searchParams.delete("consultancy");
+                            setSearchParams(searchParams);
+                        } else {
+                            setTimeout(() => {
+                                consultancyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }, 100);
+                        }
+                    } catch (err) {
+                        console.error("Error checking active bookings:", err);
+                        setTimeout(() => {
+                            consultancyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }, 100);
+                    }
+                };
+                checkActive();
+            } else {
+                setTimeout(() => {
+                    consultancyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }, 100);
+            }
         }
-    }, [searchParams]);
+    }, [searchParams, user]);
 
     /* ─────────────────────────────────────────────────────────────
        GUEST-ONLY: Send / Verify OTP
@@ -287,7 +339,11 @@ const Index = () => {
                     setVerified(false);
                 }
             } else {
-                alert(data.message || "Booking failed. Please try again.");
+                if (data.code === "ACTIVE_BOOKING_EXISTS") {
+                    setShowActiveBookingPopup(true);
+                } else {
+                    alert(data.message || "Booking failed. Please try again.");
+                }
             }
         } catch (error) {
             console.error(error);
@@ -558,6 +614,19 @@ const Index = () => {
                                 Okay
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ──────────── ACTIVE BOOKING POPUP ──────────── */}
+            {showActiveBookingPopup && (
+                <div className="popup-overlay">
+                    <div className="popup-box">
+                        <button className="popup-close-btn" onClick={() => setShowActiveBookingPopup(false)}>✕</button>
+                        <h2>Consultation Exists</h2>
+                        <p style={{ marginTop: "15px", marginBottom: "25px", color: "#555" }}>
+                            You already have a consultation scheduled. Please complete your active booking or wait until it has passed before scheduling a new one.
+                        </p>
                     </div>
                 </div>
             )}

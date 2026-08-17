@@ -194,7 +194,7 @@ const ProductDetails = () => {
                         style={{ cursor: "zoom-in" }}
                     />
                 </div>
-
+                
                 {/* Right: Info */}
                 <div className="product-details-right">
                     {product.popular && (
@@ -277,9 +277,10 @@ const ProductDetails = () => {
                             className="pd-view-more-link"
                             onClick={() => navigate(`/products/${product.category}`)}
                         >
-                            View More &gt;
+                            ⮞
                         </span>
                     </div>
+                    <div className="pd-related-divider"></div>
                     <div className="pd-related-grid">
                         {related.map((p) => (
                             <div

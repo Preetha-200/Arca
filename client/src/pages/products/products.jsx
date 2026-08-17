@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, setDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -30,6 +30,11 @@ const Products = () => {
     const { category } = useParams();
     const { user }     = useAuth();
     const { showToast, ToastContainer } = useToast();
+
+    /* ── Scroll to top on load/category change ── */
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [category]);
 
     /* ── State ── */
     const [search,       setSearch]       = useState("");
@@ -133,7 +138,7 @@ const Products = () => {
             {/* ── Hero ── */}
             <div 
                 className={`products-hero banner-${category}`}
-                style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(/banner-images/${bannerImage})` }}
+                style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url(/banner-images/${bannerImage})` }}
             >
                 <h1>{label}</h1>
             </div>

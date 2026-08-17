@@ -260,19 +260,6 @@ html{
   background: rgb(71, 6, 6, 0.6);
 }
 
-.pop-up-btn {
-  background: #470606;
-  border: 1px solid #FFFFFF;
-  border-radius: 5px;
-  color: #D6D5D5;
-  margin-top: 20px;
-  width: 80px;
-  height: 30px;
-  font-size: 15px;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-}
-
 .email-input-wrapper {
   position: relative;
   width: 100%; 
@@ -325,16 +312,78 @@ html{
 }
 
 .popup-box {
+  position: relative;
   background: white;
-  padding: 25px;
-  border-radius: 10px;
+  padding: 40px 30px 30px;
+  border-radius: 12px;
   text-align: center;
-  width: 300px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
-.popup-box h2{
-  margin: 5px;
-  margin-left: 25px;
+.popup-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-close-btn:hover {
+  color: #333;
+}
+
+.popup-box h2 {
+  margin: 0 0 15px 0;
+  color: #470606;
+  font-size: 22px;
+}
+
+.popup-box p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.popup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pop-up-btn-primary, .pop-up-btn-secondary {
+  width: 100%;
+  height: 44px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.pop-up-btn-primary {
+  background: #470606;
+  color: #ffffff;
+}
+
+.pop-up-btn-secondary {
+  background: #f0f0f0;
+  color: #333333;
+}
+
+.pop-up-btn-primary:hover, .pop-up-btn-secondary:hover {
+  opacity: 0.9;
 }
 
 .error-text {
@@ -413,11 +462,11 @@ html, body, #root {
   position: absolute;
   right: 16px;
   top: 0;
-  height: 100%;
+  height: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #7a7a7a;
+  color: #66a304;
   pointer-events: none;
 }
 .email-verified-tick .material-symbols-outlined {
@@ -671,9 +720,12 @@ html, body, #root {
   }
   
   /* CONSULTANCY */
+  .consultancy_wrapper{
+    background: #dfdfdf;
+    padding: 50px 30px;
+  }
   .consultancy {
     background: #dfdfdf;
-    padding: 70px 12vw;
     display: flex;
     flex-direction: column;
     gap: 36px;

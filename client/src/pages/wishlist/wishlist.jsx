@@ -106,7 +106,7 @@ const Wishlist = () => {
                                         onClick={() => handleRemove(item.productId)}
                                         title="Remove from wishlist"
                                     >
-                                        <span className="material-symbols-outlined" style={{fontSize:"16px"}}>close</span> Remove
+                                        Remove
                                     </button>
                                 </div>
                             </div>

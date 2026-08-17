@@ -377,184 +377,187 @@ const Index = () => {
             </section>
 
             {/* ──────────── CONSULTANCY ──────────── */}
-            <section className="consultancy" ref={consultancyRef} id="consultancy-form">
-                <div className="text">
-                    <h2>Your vision, architecturally defined.</h2>
-                    <p>
-                        Skip the confusion of layouts and costs. Our 3D design sessions
-                        allow you to walk through your future home before construction.
-                    </p>
-                </div>
+            <div className="consultancy_wrapper">
+                <section className="consultancy" ref={consultancyRef} id="consultancy-form">
+                    <div className="text">
+                        <h2>Your vision, architecturally defined.</h2>
+                        <p>
+                            Skip the confusion of layouts and costs. Our 3D design sessions
+                            allow you to walk through your future home before construction.
+                        </p>
+                    </div>
 
-                <div className="form">
-                    <h3>Meet a designer</h3>
-                    
-                    {/* ── Signed-in user greeting ── */}
-                    {user && user.photoURL && (
-                        <div className="user-greeting">
-                            <img
-                                src={user.photoURL}
-                                alt={user.displayName || "Profile"}
-                                className="user-greeting-avatar"
-                                referrerPolicy="no-referrer"
-                            />
-                            <span className="user-greeting-name">
-                                Hello, {user.displayName?.split(" ")[0] || "there"}
-                            </span>
-                        </div>
-                    )}
+                    <div className="form">
+                        <h3>Meet a designer</h3>
+                        
+                        {/* ── Signed-in user greeting ── */}
+                        {user && user.photoURL && (
+                            <div className="user-greeting">
+                                <img
+                                    src={user.photoURL}
+                                    alt={user.displayName || "Profile"}
+                                    className="user-greeting-avatar"
+                                    referrerPolicy="no-referrer"
+                                />
+                                <span className="user-greeting-name">
+                                    Hello, {user.displayName?.split(" ")[0] || "there"}
+                                </span>
+                            </div>
+                        )}
 
-                    {/* ── Name ── */}
-                    <input
-                        type="text"
-                        placeholder="Enter your Name"
-                        value={name}
-                        disabled={!!user}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setName(value);
-                            setNameError(validateName(value));
-                        }}
-                    />
-                    {nameError && <p className="error-text">{nameError}</p>}
-
-                    {/* ── Email + OTP (OTP shown only for guests) ── */}
-                    <div className="email-input-wrapper">
+                        {/* ── Name ── */}
                         <input
-                            type="email"
-                            placeholder="Enter your Email"
-                            value={email}
+                            type="text"
+                            placeholder="Enter your Name"
+                            value={name}
                             disabled={!!user}
                             onChange={(e) => {
                                 const value = e.target.value;
-                                setEmail(value);
-                                setEmailError(validateEmail(value));
-                                setOtpClicked(false);
-                                if (verified) {
-                                    setVerified(false);
-                                    setOtp("");
-                                    setOtpSent(false);
-                                }
+                                setName(value);
+                                setNameError(validateName(value));
                             }}
                         />
-                        {/* Send OTP — guests only */}
-                        {!user && !verified && (
-                            <button type="button" className="send-otp-btn" onClick={sendOtp}>
-                                {otpSent ? "Resend" : "Send OTP"}
-                            </button>
-                        )}
-                        {user && (
-                            <span className="email-verified-tick" title="Verified via Firebase">
-                                <span className="material-symbols-outlined">check_circle</span>
-                            </span>
-                        )}
-                    </div>
+                        {nameError && <p className="error-text">{nameError}</p>}
 
-                    {/* Email errors + OTP hint — guests only */}
-                    {!user && emailError && <p className="error-text">{emailError}</p>}
-                    {!user && email && !emailError && !verified && !otpClicked && (
-                        <p className="error-text">Please verify your email</p>
-                    )}
+                        {/* ── Email + OTP (OTP shown only for guests) ── */}
+                        <div className="email-input-wrapper">
+                            <input
+                                type="email"
+                                placeholder="Enter your Email"
+                                value={email}
+                                disabled={!!user}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setEmail(value);
+                                    setEmailError(validateEmail(value));
+                                    setOtpClicked(false);
+                                    if (verified) {
+                                        setVerified(false);
+                                        setOtp("");
+                                        setOtpSent(false);
+                                    }
+                                }}
+                            />
+                            {/* Send OTP — guests only */}
+                            {!user && !verified && (
+                                <button type="button" className="send-otp-btn" onClick={sendOtp}>
+                                    {otpSent ? "Resend" : "Send OTP"}
+                                </button>
+                            )}
+                            {user && (
+                                <span className="email-verified-tick" title="Verified via Firebase">
+                                    <span className="material-symbols-outlined">check_circle</span>
+                                </span>
+                            )}
+                        </div>
 
-                    {/* OTP input row — guests only, after OTP is sent */}
-                    {!user && otpSent && !verified && (
-                        <div className="otp-input-wrapper">
+                        {/* Email errors + OTP hint — guests only */}
+                        {!user && emailError && <p className="error-text">{emailError}</p>}
+                        {!user && email && !emailError && !verified && !otpClicked && (
+                            <p className="error-text">Please verify your email</p>
+                        )}
+
+                        {/* OTP input row — guests only, after OTP is sent */}
+                        {!user && otpSent && !verified && (
+                            <div className="otp-input-wrapper">
+                                <input
+                                    type="text"
+                                    placeholder="Enter OTP"
+                                    value={otp}
+                                    onChange={(e) =>
+                                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                                    }
+                                />
+                                <button type="button" className="verify-otp" onClick={verifyOtp}>
+                                    Verify
+                                </button>
+                            </div>
+                        )}
+
+                        {/* ── Mobile ── */}
+                        <div className="mobile-input">
+                            <div className="country-code">
+                                <span>+91</span>
+                            </div>
                             <input
                                 type="text"
-                                placeholder="Enter OTP"
-                                value={otp}
-                                onChange={(e) =>
-                                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                                }
+                                placeholder="Enter your Mobile number"
+                                value={mobile}
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                                    setMobile(value);
+                                    setMobileError(validateMobile(value));
+                                }}
                             />
-                            <button type="button" className="verify-otp" onClick={verifyOtp}>
-                                Verify
-                            </button>
                         </div>
-                    )}
+                        {mobileError && <p className="error-text">{mobileError}</p>}
+                        {/* Hint when mobile is pre-filled */}
+                        {user && mobilePrefilled && !mobileError && (
+                            <p className="info-text">Mobile number pre-filled from your profile — edit if needed.</p>
+                        )}
 
-                    {/* ── Mobile ── */}
-                    <div className="mobile-input">
-                        <div className="country-code">
-                            <span>+91</span>
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Enter your Mobile number"
-                            value={mobile}
-                            onChange={(e) => {
-                                const value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                                setMobile(value);
-                                setMobileError(validateMobile(value));
-                            }}
-                        />
+                        {/* ── City ── */}
+                        <select value={city} onChange={(e) => setCity(e.target.value)}>
+                            <option value="">Select your property city</option>
+                            <option>Chennai</option>
+                            <option>Madurai</option>
+                            <option>Coimbatore</option>
+                            <option>Bangalore</option>
+                        </select>
+
+                        {/* ── Consultation Type ── */}
+                        <select
+                            value={consultationType}
+                            onChange={(e) => setConsultationType(e.target.value)}
+                        >
+                            <option value="">Select consultation type</option>
+                            {CONSULTATION_TYPES.map((t) => (
+                                <option key={t} value={t}>{t}</option>
+                            ))}
+                        </select>
+
+                        {/* ── Book Button ── */}
+                        <button
+                            className="booking-btn"
+                            onClick={handleBookConsultancy}
+                            disabled={isButtonDisabled()}
+                        >
+                            {loading ? "Booking..." : "Book Consultancy"}
+                        </button>
                     </div>
-                    {mobileError && <p className="error-text">{mobileError}</p>}
-                    {/* Hint when mobile is pre-filled */}
-                    {user && mobilePrefilled && !mobileError && (
-                        <p className="info-text">Mobile number pre-filled from your profile — edit if needed.</p>
-                    )}
-
-                    {/* ── City ── */}
-                    <select value={city} onChange={(e) => setCity(e.target.value)}>
-                        <option value="">Select your property city</option>
-                        <option>Chennai</option>
-                        <option>Madurai</option>
-                        <option>Coimbatore</option>
-                        <option>Bangalore</option>
-                    </select>
-
-                    {/* ── Consultation Type ── */}
-                    <select
-                        value={consultationType}
-                        onChange={(e) => setConsultationType(e.target.value)}
-                    >
-                        <option value="">Select consultation type</option>
-                        {CONSULTATION_TYPES.map((t) => (
-                            <option key={t} value={t}>{t}</option>
-                        ))}
-                    </select>
-
-                    {/* ── Book Button ── */}
-                    <button
-                        className="booking-btn"
-                        onClick={handleBookConsultancy}
-                        disabled={isButtonDisabled()}
-                    >
-                        {loading ? "Booking..." : "Book Consultancy"}
-                    </button>
-                </div>
-            </section>
+                </section>
+            </div>
 
             {/* ──────────── SUCCESS POPUP ──────────── */}
             {showPopup && (
                 <div className="popup-overlay">
                     <div className="popup-box">
-                        <h2>Consultation Booked!</h2>
+                        <button className="popup-close-btn" onClick={() => setShowPopup(false)}>✕</button>
+                        <h2>Consultation Booked</h2>
                         <p>
-                            Your consultation has been confirmed.
-                            <br />
+                            Your consultation request has been received.
+                            <br /><br />
                             {bookingId && (
                                 <>
                                     Booking ID: <strong>{bookingId}</strong>
                                     <br />
                                 </>
                             )}
-                            Check your email for full details including your meeting link
-                            and scheduled time.
+                            Check your email for full details.
                         </p>
-                        {auth.currentUser && (
-                            <button
-                                className="pop-up-btn"
-                                style={{ marginBottom: "8px" }}
-                                onClick={() => { setShowPopup(false); navigate("/bookings"); }}
-                            >
-                                View My Bookings
+                        <div className="popup-actions">
+                            {auth.currentUser && (
+                                <button
+                                    className="pop-up-btn-primary"
+                                    onClick={() => { setShowPopup(false); navigate("/bookings"); }}
+                                >
+                                    View My Bookings
+                                </button>
+                            )}
+                            <button className="pop-up-btn-secondary" onClick={() => setShowPopup(false)}>
+                                Okay
                             </button>
-                        )}
-                        <button className="pop-up-btn" onClick={() => setShowPopup(false)}>
-                            Okay
-                        </button>
+                        </div>
                     </div>
                 </div>
             )}

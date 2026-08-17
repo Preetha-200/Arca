@@ -1,6 +1,7 @@
 const express = require("express");
 const cors    = require("cors");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 require("dotenv").config();
 const { initializeApp, getApps } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
@@ -434,6 +435,286 @@ const buildUserEmail = (data) => {
 };
 
 /* ──────────────────────────────────────────────────────────────────
+   PENDING EMAIL TEMPLATE (customer initial booking)
+   ────────────────────────────────────────────────────────────────── */
+const buildCustomerPendingEmail = (data) => {
+  const { name, bookingId, consultationType, city } = data;
+  return /* html */`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Your ARCA Consultation Request is Received</title>
+</head>
+<body style="margin:0;padding:0;background:#f0eded;font-family:Georgia,serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0eded;padding:40px 0;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0"
+      style="background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 4px 30px rgba(71,6,6,0.10);">
+      <!-- HEADER -->
+      <tr>
+        <td style="background:#470606;padding:44px 40px;text-align:center;">
+          <p style="margin:0 0 6px 0;color:rgba(255,255,255,0.5);font-size:10px;
+            letter-spacing:5px;text-transform:uppercase;font-family:Arial,sans-serif;">
+            PREMIUM INTERIORS
+          </p>
+          <h1 style="margin:0 0 6px 0;color:#ffffff;font-family:Georgia,serif;
+            font-size:38px;font-weight:normal;letter-spacing:8px;">
+            ARCA
+          </h1>
+        </td>
+      </tr>
+      <!-- CONFIRMATION BANNER -->
+      <tr>
+        <td style="background:#f9f4f4;border-bottom:1px solid #ecdcdc;
+          padding:28px 40px;text-align:center;">
+          <h2 style="margin:0 0 8px 0;color:#1a0505;font-size:22px;font-family:Georgia,serif;
+            font-weight:normal;letter-spacing:1px;">
+            Consultation Request Received
+          </h2>
+          <p style="margin:0;color:#888;font-size:13px;font-family:Arial,sans-serif;">
+            Booking Reference:&nbsp;
+            <strong style="color:#470606;letter-spacing:1px;">${bookingId}</strong>
+          </p>
+        </td>
+      </tr>
+      <!-- GREETING -->
+      <tr>
+        <td style="padding:32px 40px 20px;">
+          <p style="margin:0 0 14px 0;color:#333;font-size:16px;line-height:1.6;">
+            Dear ${name},
+          </p>
+          <p style="margin:0;color:#555;font-size:14px;line-height:1.9;
+            font-family:Arial,sans-serif;">
+            Thank you for reaching out to <strong>ARCA Interior Design</strong>. 
+            We have received your consultation request for a <strong>${consultationType}</strong> project 
+            ${city ? `in <strong>${city}</strong>` : ''}.
+          </p>
+          <p style="margin:16px 0 0 0;color:#555;font-size:14px;line-height:1.9;
+            font-family:Arial,sans-serif;">
+            Our team is currently reviewing your details. We will contact you shortly to confirm 
+            the date, time, and assign a designer for your consultation.
+          </p>
+        </td>
+      </tr>
+      <!-- FOOTER -->
+      <tr>
+        <td style="background:#1a0505;padding:36px 40px;text-align:center;">
+          <p style="margin:0 0 6px 0;color:#ffffff;font-size:15px;
+            font-family:Georgia,serif;letter-spacing:1px;">
+            Thank you for choosing <strong>ARCA</strong>.
+          </p>
+          <p style="margin:0;color:#666;font-size:11px;font-family:Arial,sans-serif;
+            border-top:1px solid #330000;padding-top:20px;line-height:1.8;">
+            © ${new Date().getFullYear()} ARCA Interior Design &nbsp;·&nbsp;
+            <a href="mailto:support@arca.in" style="color:#666;">support@arca.in</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+};
+
+/* ──────────────────────────────────────────────────────────────────
+   CUSTOMER CONFIRMATION TEMPLATE
+   ────────────────────────────────────────────────────────────────── */
+const buildCustomerConfirmedEmail = (data) => {
+  const { name, bookingId, consultationType, scheduledDate, scheduledTime, meetingUrl } = data;
+  return /* html */`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Your ARCA Consultation is Confirmed</title>
+</head>
+<body style="margin:0;padding:0;background:#f9f9f9;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f9f9f9;padding:40px 0;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0"
+      style="background:#ffffff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
+      <!-- HEADER -->
+      <tr>
+        <td style="padding:40px 40px 20px;text-align:center;">
+          <h1 style="margin:0 0 10px 0;color:#111111;font-family:Arial,sans-serif;
+            font-size:28px;font-weight:bold;letter-spacing:4px;">
+            ARCA
+          </h1>
+          <p style="margin:0;color:#666666;font-size:12px;letter-spacing:2px;text-transform:uppercase;">
+            Premium Interiors
+          </p>
+        </td>
+      </tr>
+      <!-- CONTENT -->
+      <tr>
+        <td style="padding:20px 40px;">
+          <h2 style="margin:0 0 20px 0;color:#222222;font-size:20px;font-weight:normal;">
+            Consultation Confirmed
+          </h2>
+          <p style="margin:0 0 20px 0;color:#444444;font-size:15px;line-height:1.6;">
+            Dear ${name},<br><br>
+            Your ${consultationType} consultation has been scheduled. Please find your meeting details below.
+          </p>
+          
+          <div style="background:#f5f5f5;padding:20px;border-radius:6px;margin-bottom:25px;">
+            <p style="margin:0 0 10px 0;color:#333;font-size:14px;">
+              <strong style="display:inline-block;width:120px;color:#666;">Booking Ref:</strong> ${bookingId}
+            </p>
+            <p style="margin:0 0 10px 0;color:#333;font-size:14px;">
+              <strong style="display:inline-block;width:120px;color:#666;">Date:</strong> ${scheduledDate}
+            </p>
+            <p style="margin:0;color:#333;font-size:14px;">
+              <strong style="display:inline-block;width:120px;color:#666;">Time:</strong> ${scheduledTime}
+            </p>
+          </div>
+
+          <div style="text-align:center;margin-bottom:30px;">
+            <a href="${meetingUrl}" style="display:inline-block;background:#111111;color:#ffffff;
+              text-decoration:none;padding:14px 28px;border-radius:4px;font-size:15px;font-weight:bold;">
+              Join Google Meet
+            </a>
+          </div>
+
+          <p style="margin:0;color:#666666;font-size:14px;line-height:1.6;">
+            We look forward to discussing your project.<br>
+            If you need to reschedule, please reply to this email.
+          </p>
+        </td>
+      </tr>
+      <!-- FOOTER -->
+      <tr>
+        <td style="padding:30px 40px;text-align:center;border-top:1px solid #eeeeee;">
+          <p style="margin:0;color:#999999;font-size:12px;line-height:1.6;">
+            © ${new Date().getFullYear()} ARCA Interior Design<br>
+            <a href="mailto:support@arca.in" style="color:#666666;text-decoration:none;">support@arca.in</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+};
+
+/* ──────────────────────────────────────────────────────────────────
+   ADMIN NOTIFICATION TEMPLATE
+   ────────────────────────────────────────────────────────────────── */
+const buildAdminNotificationEmail = (data) => {
+  const { 
+    bookingId, name, email, mobile, city, consultationType, 
+    projectType, propertyType, spaceType, dimensions, 
+    budget, productName, confirmUrl
+  } = data;
+  
+  return /* html */`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>New ARCA Booking</title>
+</head>
+<body style="margin:0;padding:0;background:#f0eded;font-family:Georgia,serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0eded;padding:40px 0;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0"
+      style="background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 4px 30px rgba(71,6,6,0.10);">
+      <!-- HEADER -->
+      <tr>
+        <td style="background:#470606;padding:30px 40px;text-align:center;">
+          <h1 style="margin:0;color:#ffffff;font-family:Georgia,serif;
+            font-size:24px;font-weight:normal;letter-spacing:4px;">
+            NEW BOOKING
+          </h1>
+        </td>
+      </tr>
+      
+      <!-- DETAILS -->
+      <tr>
+        <td style="padding:32px 40px;">
+          <p style="margin:0 0 20px 0;color:#333;font-size:16px;line-height:1.6;">
+            A new consultation request has been submitted.
+          </p>
+          
+          <table width="100%" cellpadding="0" cellspacing="0"
+            style="border:1px solid #ecdcdc;border-radius:8px;overflow:hidden;">
+            <tr>
+              <td colspan="2" style="background:#f9f4f4;padding:12px 20px;
+                border-bottom:1px solid #ecdcdc;font-family:Arial,sans-serif;font-weight:bold;color:#470606;">
+                Customer Details
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;width:40%;border-bottom:1px solid #f5eaea;">Booking ID</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;font-weight:bold;border-bottom:1px solid #f5eaea;">${bookingId}</td>
+            </tr>
+            <tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">Name</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">Email</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">${email}</td>
+            </tr>
+            <tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">Mobile</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">+91 ${mobile}</td>
+            </tr>
+            <tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;">City</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;">${city}</td>
+            </tr>
+          </table>
+          
+          <table width="100%" cellpadding="0" cellspacing="0"
+            style="border:1px solid #ecdcdc;border-radius:8px;overflow:hidden;margin-top:20px;">
+            <tr>
+              <td colspan="2" style="background:#f9f4f4;padding:12px 20px;
+                border-bottom:1px solid #ecdcdc;font-family:Arial,sans-serif;font-weight:bold;color:#470606;">
+                Project Details
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;width:40%;border-bottom:1px solid #f5eaea;">Consultation</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">${consultationType}</td>
+            </tr>
+            ${projectType ? `<tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">Project Type</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">${projectType} - ${propertyType || 'N/A'}</td>
+            </tr>` : ''}
+            ${spaceType ? `<tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">Space</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">${spaceType} ${dimensions ? `(${dimensions})` : ''}</td>
+            </tr>` : ''}
+            ${budget ? `<tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">Budget</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;border-bottom:1px solid #f5eaea;">${budget}</td>
+            </tr>` : ''}
+            ${productName ? `<tr>
+              <td style="padding:12px 20px;color:#888;font-size:13px;font-family:Arial,sans-serif;">Product</td>
+              <td style="padding:12px 20px;color:#222;font-size:13px;font-family:Arial,sans-serif;">${productName}</td>
+            </tr>` : ''}
+          </table>
+          
+          <div style="text-align:center;margin-top:30px;">
+            <a href="${confirmUrl}" style="display:inline-block;background:#470606;color:#ffffff;
+              text-decoration:none;padding:14px 32px;border-radius:6px;font-size:16px;font-weight:bold;
+              font-family:Arial,sans-serif;letter-spacing:1px;">
+              Confirm Booking
+            </a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+};
+
+/* ──────────────────────────────────────────────────────────────────
    HEALTH CHECK
    ────────────────────────────────────────────────────────────────── */
 app.get("/", (req, res) => {
@@ -564,6 +845,7 @@ app.post("/book-consultancy", async (req, res) => {
       productName: productName || "",
       referenceImages: referenceImages || [],
       status: "pending",
+      confirmationToken: crypto.randomBytes(32).toString("hex"),
       createdAt: FieldValue.serverTimestamp(),
     };
     
@@ -571,46 +853,59 @@ app.post("/book-consultancy", async (req, res) => {
     const bookingId = bookingRef.id;
     bookingData.bookingId = bookingId;
 
+    const baseUrl = process.env.BACKEND_URL || "http://localhost:5000";
+    const confirmUrl = `${baseUrl}/api/admin/confirm-booking-test/${bookingId}?token=${bookingData.confirmationToken}`;
 
     /* ── Admin notification email ── */
     const adminMail = {
       from:    process.env.EMAIL_USER,
       to:      process.env.EMAIL_USER,
       subject: `New ARCA Booking — ${bookingId}`,
-      html: `
-        <div style="font-family:Arial,sans-serif;padding:24px;">
-          <h2 style="color:#470606;">New Consultancy Booking</h2>
-          <table>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Booking ID</td>
-                <td><strong>${bookingId}</strong></td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Name</td>
-                <td>${name}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Email</td>
-                <td>${email}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Mobile</td>
-                <td>+91 ${mobile}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">City</td>
-                <td>${city}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Consultation</td>
-                <td>${bookingData.consultationType}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Project Type</td>
-                <td>${bookingData.projectType || 'N/A'} - ${bookingData.propertyType || 'N/A'}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Space</td>
-                <td>${bookingData.spaceType || 'N/A'} ${bookingData.dimensions ? `(${bookingData.dimensions})` : ''}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Budget</td>
-                <td>${bookingData.budget || 'N/A'}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Product</td>
-                <td>${bookingData.productName || 'None'}</td></tr>
-                                  </table>
-        </div>
-      `,
+      html: buildAdminNotificationEmail({
+        bookingId,
+        name,
+        email,
+        mobile: mobile || "",
+        city: city || "",
+        consultationType: bookingData.consultationType,
+        projectType: bookingData.projectType,
+        propertyType: bookingData.propertyType,
+        spaceType: bookingData.spaceType,
+        dimensions: bookingData.dimensions,
+        budget: bookingData.budget,
+        productName: bookingData.productName,
+        confirmUrl
+      }),
     };
 
+    try {
+      console.log(`[OWNER EMAIL] Sending to ${process.env.EMAIL_USER}...`);
+      await transporter.sendMail(adminMail);
+      console.log("[OWNER EMAIL] Successfully sent.");
+    } catch (err) {
+      console.error("[OWNER EMAIL] Failed to send:", err.message || err);
+    }
     
+    /* ── Customer confirmation email ── */
+    const customerMail = {
+      from:    process.env.EMAIL_USER,
+      to:      email,
+      subject: `Your ARCA Consultation Request — ${bookingId}`,
+      html: buildCustomerPendingEmail({
+        bookingId,
+        name,
+        consultationType: bookingData.consultationType,
+        city: city || ""
+      }),
+    };
 
-    /* ── Send both emails ── */
-    const adminResult = await transporter.sendMail(adminMail);
-    console.log("Admin email sent.");
+    try {
+      console.log(`[CUSTOMER EMAIL] Sending to ${email}...`);
+      await transporter.sendMail(customerMail);
+      console.log("[CUSTOMER EMAIL] Successfully sent.");
+    } catch (err) {
+      console.error("[CUSTOMER EMAIL] Failed to send:", err.message || err);
+    }
     
     await db.collection("notifications").add({
       type: "new_booking",
@@ -637,6 +932,115 @@ app.post("/book-consultancy", async (req, res) => {
     res.status(500).json({ message: "Failed to process booking" });
   }
 });
+
+/* ──────────────────────────────────────────────────────────────────
+   TESTING: AUTOMATED CONFIRM BOOKING VIA EMAIL LINK
+   ────────────────────────────────────────────────────────────────── */
+app.get("/api/admin/confirm-booking-test/:id", async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const token = req.query.token;
+
+    if (!bookingId || !token) {
+      return res.status(400).send("<h1>Invalid Request</h1><p>Missing booking ID or token.</p>");
+    }
+
+    const bookingRef = db.collection("bookings").doc(bookingId);
+    const bookingDoc = await bookingRef.get();
+
+    if (!bookingDoc.exists) {
+      return res.status(404).send("<h1>Not Found</h1><p>Booking not found.</p>");
+    }
+
+    const booking = bookingDoc.data();
+
+    // Check token
+    if (booking.confirmationToken !== token) {
+      return res.status(403).send("<h1>Forbidden</h1><p>Invalid confirmation token.</p>");
+    }
+
+    // Ensure it's still pending
+    if (booking.status !== "pending" && booking.status !== "Pending") {
+      return res.status(400).send(`<h1>Already Processed</h1><p>This booking is currently marked as ${booking.status}.</p>`);
+    }
+
+    // Set time to exactly 5 minutes from now
+    const now = new Date();
+    const meetTime = new Date(now.getTime() + 5 * 60 * 1000); // 5 mins
+    
+    const yyyy = meetTime.getFullYear();
+    const mm = String(meetTime.getMonth() + 1).padStart(2, '0');
+    const dd = String(meetTime.getDate()).padStart(2, '0');
+    const scheduledDate = `${yyyy}-${mm}-${dd}`;
+    
+    let hours = meetTime.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    const minutes = String(meetTime.getMinutes()).padStart(2, '0');
+    const scheduledTime = `${hours}:${minutes} ${ampm}`;
+
+    const dummyMeetUrl = "https://meet.google.com/abc-defg-hij";
+
+    await bookingRef.update({
+      status: "Confirmed",
+      scheduledDate,
+      scheduledTime,
+      meetingUrl: dummyMeetUrl,
+      confirmedAt: FieldValue.serverTimestamp()
+    });
+
+    // Send customer confirmation email
+    const customerMail = {
+      from:    process.env.EMAIL_USER,
+      to:      booking.email,
+      subject: \`Your ARCA Consultation is Confirmed — \${bookingId}\`,
+      html: buildCustomerConfirmedEmail({
+        name: booking.name,
+        bookingId,
+        consultationType: booking.consultationType,
+        scheduledDate,
+        scheduledTime,
+        meetingUrl: dummyMeetUrl
+      }),
+    };
+
+    try {
+      console.log(\`[CUSTOMER CONFIRMED EMAIL] Sending to \${booking.email}...\`);
+      await transporter.sendMail(customerMail);
+      console.log("[CUSTOMER CONFIRMED EMAIL] Successfully sent.");
+    } catch (err) {
+      console.error("[CUSTOMER CONFIRMED EMAIL] Failed to send:", err.message || err);
+    }
+
+    // Simple success response page
+    res.send(\`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Booking Confirmed</title>
+        <style>
+          body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 40px; text-align: center; }
+          .container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 500px; margin: 0 auto; }
+          h1 { color: #470606; margin-top: 0; }
+          p { color: #555; line-height: 1.6; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Booking Confirmed</h1>
+          <p>The consultation request for <strong>\${booking.name}</strong> has been confirmed.</p>
+          <p>A confirmation email with the Google Meet link has been sent to the customer.</p>
+        </div>
+      </body>
+      </html>
+    \`);
+  } catch (error) {
+    console.error("Error confirming booking:", error);
+    res.status(500).send("<h1>Server Error</h1><p>An error occurred while confirming the booking.</p>");
+  }
+});
+
 
 
 /* ──────────────────────────────────────────────────────────────────

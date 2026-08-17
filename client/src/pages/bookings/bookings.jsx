@@ -71,11 +71,17 @@ const fmtDate = (iso) => {
 /* ────────────────────────────────────────────────────────────────── */
 /*  STATUS BADGE                                                      */
 /* ────────────────────────────────────────────────────────────────── */
-const StatusBadge = ({ status }) => (
-  <span className={`bk-badge bk-badge-${(status || "confirmed").toLowerCase()}`}>
-    {status || "Confirmed"}
-  </span>
-);
+const StatusBadge = ({ status, hasPassed }) => {
+  let displayStatus = status || "Confirmed";
+  if ((status === "Confirmed" || status === "confirmed") && hasPassed) {
+    displayStatus = "Over";
+  }
+  return (
+    <span className={`bk-badge bk-badge-${displayStatus.toLowerCase()}`}>
+      {displayStatus}
+    </span>
+  );
+};
 
 /* ────────────────────────────────────────────────────────────────── */
 /*  HERO BOOKING CARD                                                 */
@@ -97,8 +103,8 @@ const HeroCard = ({ booking, onViewDetails, onComplete }) => {
   const isConfirmed = booking.status === "confirmed" || booking.status === "Confirmed" || booking.status === "Rescheduled" || booking.status === "rescheduled";
 
   const hasPassed = meetingTime && now >= meetingTime;
-  const canJoin = isConfirmed && meetingTime && now >= meetingTime - 5 * 60 * 1000 && !isCompleted && !isCancelled;
-  const canComplete = isConfirmed && hasPassed && !isCompleted && !isCancelled;
+  const isOver = isConfirmed && hasPassed;
+  const canJoin = isConfirmed && meetingTime && now >= meetingTime - 5 * 60 * 1000 && !isOver && !isCompleted && !isCancelled;
 
   const countdown = getCountdown(booking);
 
@@ -109,7 +115,7 @@ const HeroCard = ({ booking, onViewDetails, onComplete }) => {
   return (
     <div className="bhc-card">
       <div className="bhc-top-row">
-        <StatusBadge status={booking.status} />
+        <StatusBadge status={booking.status} hasPassed={hasPassed} />
         {countdown && countdown !== "Meeting passed" && !isCompleted && !isCancelled && (
           <span className="bhc-countdown"><span className="material-symbols-outlined" style={{fontSize:"16px"}}>schedule</span> {countdown}</span>
         )}
@@ -179,23 +185,17 @@ const HeroCard = ({ booking, onViewDetails, onComplete }) => {
           View Details
         </button>
 
-        {canComplete ? (
-          <button className="bhc-join-btn" onClick={() => onComplete(booking.bookingId)}>
-            Mark Completed
-          </button>
-        ) : (
-          <button
-            className={`bhc-join-btn ${(!canJoin || !booking.meetingUrl) ? "bhc-join-disabled" : ""}`}
-            disabled={!canJoin || !booking.meetingUrl}
-            onClick={() => booking.meetingUrl && window.open(booking.meetingUrl, "_blank")}
-            title={canJoin ? "Join Google Meet" : "Available 5 minutes before the meeting"}
-          >
-            Join Meeting
-          </button>
-        )}
+        <button
+          className={`bhc-join-btn ${(!canJoin || !booking.meetingUrl) ? "bhc-join-disabled" : ""}`}
+          disabled={!canJoin || !booking.meetingUrl}
+          onClick={() => booking.meetingUrl && window.open(booking.meetingUrl, "_blank")}
+          title={canJoin ? "Join Google Meet" : "Available 5 minutes before the meeting"}
+        >
+          Join Meeting
+        </button>
       </div>
 
-      {!canJoin && !isCompleted && !isCancelled && isConfirmed && !canComplete && (
+      {!canJoin && !isCompleted && !isCancelled && isConfirmed && !isOver && (
         <p className="bhc-join-note">
           {booking.meetingUrl 
             ? "The Join Meeting button will be enabled 5 minutes before your scheduled time." 
@@ -221,6 +221,9 @@ const SmallCard = ({ booking, onViewDetails }) => {
 
   const img = roomImages[booking.consultationType] || "/livingRoom.png";
   const isPending = booking.status === "pending" || booking.status === "Pending";
+  const meetingTime = getMeetingDate(booking);
+  const now = Date.now();
+  const hasPassed = meetingTime && now >= meetingTime;
 
   return (
     <div className="bk-card">
@@ -235,7 +238,7 @@ const SmallCard = ({ booking, onViewDetails }) => {
               ? `${booking.consultationType} Consultation`
               : "Interior Design Consultation"}
           </h3>
-          <StatusBadge status={booking.status} />
+          <StatusBadge status={booking.status} hasPassed={hasPassed} />
         </div>
 
         <div className="bk-card-meta">
@@ -279,18 +282,21 @@ const SmallCard = ({ booking, onViewDetails }) => {
 const DetailsModal = ({ booking, onClose }) => {
   if (!booking) return null;
   const isPending = booking.status === "pending" || booking.status === "Pending";
+  const meetingTime = getMeetingDate(booking);
+  const now = Date.now();
+  const hasPassed = meetingTime && now >= meetingTime;
 
   return (
     <div className="popup-overlay" onClick={onClose} style={{ zIndex: 1000 }}>
       <div className="popup-box" style={{ width: '600px', textAlign: 'left', padding: '30px' }} onClick={e => e.stopPropagation()}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: 0, fontSize: '24px', color: '#500606' }}>Booking Details</h2>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer', outline: 'none' }}>✕</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 0 20px 0' }}>
+          <h2 style={{ margin: 0, fontSize: '24px', color: '#470606' }}>Booking Details</h2>
+          <button className="popup-close-btn" onClick={onClose} style={{ position: 'static' }}>✕</button>
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontSize: '15px', color: '#4B4848' }}>
           <div><strong>Booking ID:</strong> <br/>{booking.bookingId}</div>
-          <div><strong>Status:</strong> <br/><StatusBadge status={booking.status} /></div>
+          <div><strong>Status:</strong> <br/><StatusBadge status={booking.status} hasPassed={hasPassed} /></div>
           
           <div style={{ gridColumn: '1 / -1', borderTop: '1px dashed #ccc', margin: '10px 0' }}></div>
           

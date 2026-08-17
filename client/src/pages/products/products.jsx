@@ -115,63 +115,68 @@ const Products = () => {
 
     const label = CATEGORIES.find((c) => c.value === category)?.label || category;
 
+    const bannerMap = {
+        "living-room": "Living-room.png",
+        "kitchen": "Kitchen.png",
+        "dining-room": "Dining-room.png",
+        "home-office": "home-office.png",
+        "bedroom": "bedroom.png",
+        "bathroom": "Bathroom.png"
+    };
+    const bannerImage = bannerMap[category] || "bedroom.png";
+
     return (
         <div className="products-page">
             <Navbar />
             <ToastContainer />
 
             {/* ── Hero ── */}
-            <div className="products-hero">
+            <div 
+                className={`products-hero banner-${category}`}
+                style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(/banner-images/${bannerImage})` }}
+            >
                 <h1>{label}</h1>
             </div>
 
             {/* ── Toolbar ── */}
             <div className="products-toolbar">
-                {/* Search */}
-                <div className="products-search-wrap">
-                    <span className="products-search-icon">⌕</span>
-                    <input
-                        type="text"
-                        className="products-search"
-                        placeholder="Search designs, materials..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                    {search && (
-                        <button
-                            className="products-search-clear"
-                            onClick={() => setSearch("")}
+                <div className="products-toolbar-center">
+                    {/* Sort */}
+                    <div className="products-sort-wrapper">
+                        <span className="icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="6" x2="16" y2="6"></line><line x1="4" y1="12" x2="10" y2="12"></line><line x1="4" y1="18" x2="10" y2="18"></line><polyline points="14 15 18 19 22 15"></polyline><line x1="18" y1="5" x2="18" y2="19"></line></svg>
+                        </span>
+                        Sort
+                        <select
+                            className="products-sort-select"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
                         >
-                            ×
-                        </button>
-                    )}
-                </div>
+                            {SORT_OPTIONS.map((o) => (
+                                <option key={o.value} value={o.value}>{o.label}</option>
+                            ))}
+                        </select>
+                    </div>
 
-                <div className="products-toolbar-right">
+                    <div className="toolbar-divider"></div>
+
                     {/* Filter toggle */}
                     <button
                         className={`products-filter-btn ${showFilters ? "active" : ""}`}
                         onClick={() => setShowFilters((v) => !v)}
                     >
-                        ⊟ Filters
+                        <span className="icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        </span>
+                        Filter
                     </button>
-
-                    {/* Sort */}
-                    <select
-                        className="products-sort"
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                    >
-                        {SORT_OPTIONS.map((o) => (
-                            <option key={o.value} value={o.value}>{o.label}</option>
-                        ))}
-                    </select>
                 </div>
             </div>
 
             {/* ── Filter Panel ── */}
             {showFilters && (
                 <div className="products-filters">
+                    <button className="products-filter-close" onClick={() => setShowFilters(false)}>×</button>
                     {/* Category quick-nav */}
                     <div className="filter-group">
                         <label>Category</label>
@@ -257,29 +262,32 @@ const Products = () => {
                                 )}
                             </div>
 
-                            {/* Info */}
-                            <div
-                                className="product-info"
-                                onClick={() => navigate(`/product/${product.id}`)}
-                            >
-                                <h2>{product.title}</h2>
-                                <p className="product-size">Size: {product.size}</p>
-                            </div>
-
-                            {/* Buttons */}
-                            <div className="product-buttons">
-                                <button
-                                    className="quote"
-                                    onClick={() => navigate(`/?consultancy=true&product_id=${product.id}`)}
-                                >
-                                    Get Quote
-                                </button>
-                                <button
-                                    className="view"
+                            {/* Content wrapper for row layout */}
+                            <div className="product-content">
+                                {/* Info */}
+                                <div
+                                    className="product-info"
                                     onClick={() => navigate(`/product/${product.id}`)}
                                 >
-                                    View Details
-                                </button>
+                                    <h2>{product.title}</h2>
+                                    <p className="product-size">Size: {product.size}</p>
+                                </div>
+
+                                {/* Buttons */}
+                                <div className="product-buttons">
+                                    <button
+                                        className="quote"
+                                        onClick={() => navigate(`/?consultancy=true&product_id=${product.id}`)}
+                                    >
+                                        Get Quote
+                                    </button>
+                                    <button
+                                        className="view"
+                                        onClick={() => navigate(`/product/${product.id}`)}
+                                    >
+                                        View Details
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))}

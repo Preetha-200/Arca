@@ -388,7 +388,7 @@ const Index = () => {
 
                 <div className="form">
                     <h3>Meet a designer</h3>
-
+                    
                     {/* ── Signed-in user greeting ── */}
                     {user && user.photoURL && (
                         <div className="user-greeting">

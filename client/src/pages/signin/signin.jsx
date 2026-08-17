@@ -136,7 +136,8 @@ const SignIn = () => {
             );
             navigate("/");
         } catch (err) {
-            showToast("Google sign-in failed. Please try again.", "error");
+            console.error("Google Sign-In Error:", err.code, err.message);
+            showToast(`Google sign-in failed: ${err.message} (${err.code})`, "error");
         }
     };
 

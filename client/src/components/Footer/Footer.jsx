@@ -10,7 +10,7 @@ const Footer = () => {
                 {/* Brand */}
                 <div className="footer-brand">
                     <div className="footer-logo" onClick={() => navigate("/")}>
-                        <img src="/logo-1.png" alt="ARCA logo" />
+                        <img src="/logo.png" alt="ARCA logo" />
                         <span>ARCA</span>
                     </div>
                     <p className="footer-tagline">Designed for the Exceptional</p>

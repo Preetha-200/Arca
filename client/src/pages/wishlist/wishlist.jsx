@@ -91,9 +91,7 @@ const Wishlist = () => {
                                         {item.title}
                                     </h3>
                                     <p className="wishlist-size">{item.size}</p>
-                                    <p className="wishlist-price">
-                                        ₹{item.price?.toLocaleString("en-IN")}
-                                    </p>
+
                                 </div>
 
                                 <div className="wishlist-card-actions">

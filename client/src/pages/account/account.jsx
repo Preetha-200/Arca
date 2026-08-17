@@ -1,7 +1,7 @@
 import "./account.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { updateProfile, sendPasswordResetEmail } from "firebase/auth";
+import { updateProfile, sendPasswordResetEmail, signOut } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
@@ -82,8 +82,18 @@ const Account = () => {
             await sendPasswordResetEmail(auth, user.email);
             setResetSent(true);
             showToast("Password reset email sent!", "success");
-        } catch (err) {
-            showToast("Failed to send reset email.", "error");
+        } catch (error) {
+            showToast("Failed to send reset email. Try again later.", "error");
+        }
+    };
+
+    /* ── Logout ── */
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            navigate("/");
+        } catch (error) {
+            showToast("Failed to logout.", "error");
         }
     };
 
@@ -221,6 +231,25 @@ const Account = () => {
                                     disabled={resetSent}
                                 >
                                     {resetSent ? "Sent" : "Reset Password"}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* ── Logout Section ── */}
+                        <div className="account-security" style={{ marginTop: "30px" }}>
+                            <div className="account-security-row">
+                                <div>
+                                    <p className="account-security-label" style={{ color: "#d9534f" }}>Logout</p>
+                                    <p className="account-security-sub">
+                                        Sign out of your account on this device
+                                    </p>
+                                </div>
+                                <button
+                                    className="account-reset-btn"
+                                    onClick={handleLogout}
+                                    style={{ borderColor: "#d9534f", color: "#d9534f" }}
+                                >
+                                    Logout
                                 </button>
                             </div>
                         </div>

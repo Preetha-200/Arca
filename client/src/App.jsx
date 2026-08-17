@@ -1,5 +1,5 @@
-import { Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 /* ── Pages ── */
@@ -12,6 +12,25 @@ import Wishlist       from "./pages/wishlist/wishlist";
 import Bookings       from "./pages/bookings/bookings";
 import Orders         from "./pages/orders/orders";
 import About          from "./pages/about/about";
+import AdminLogin     from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminBookings  from "./pages/admin/AdminBookings";
+
+/**
+ * Higher Order Component to protect admin routes.
+ * Redirects to /admin/login if the user is not authenticated or not an admin.
+ */
+const AdminRoute = ({ children }) => {
+    const { user, userRole, loading } = useAuth();
+    
+    if (loading) return null; // Or a loader component
+
+    if (!user || userRole !== "admin") {
+        return <Navigate to="/admin/login" replace />;
+    }
+
+    return children;
+};
 
 function App() {
     return (
@@ -24,7 +43,7 @@ function App() {
                 <Route path="/product/:id"        element={<ProductDetails />} />
                 <Route path="/about"              element={<About />} />
 
-                {/* ── Protected Routes ── */}
+                {/* ── Protected Customer Routes ── */}
                 <Route
                     path="/account"
                     element={
@@ -56,6 +75,37 @@ function App() {
                             <Orders />
                         </ProtectedRoute>
                     }
+                />
+
+                {/* ── Admin Routes ── */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                
+                {/* /admin redirects to dashboard */}
+                <Route 
+                    path="/admin" 
+                    element={
+                        <AdminRoute>
+                            <Navigate to="/admin/dashboard" replace />
+                        </AdminRoute>
+                    } 
+                />
+                
+                <Route 
+                    path="/admin/dashboard" 
+                    element={
+                        <AdminRoute>
+                            <AdminDashboard />
+                        </AdminRoute>
+                    } 
+                />
+                
+                <Route 
+                    path="/admin/bookings" 
+                    element={
+                        <AdminRoute>
+                            <AdminBookings />
+                        </AdminRoute>
+                    } 
                 />
             </Routes>
         </AuthProvider>

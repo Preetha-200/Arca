@@ -4,16 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import {
-  collection, onSnapshot, query, orderBy,
+  collection, onSnapshot, query, where, orderBy,
 } from "firebase/firestore";
 import Navbar  from "../../components/Navbar/Navbar";
 import Footer  from "../../components/Footer/Footer";
+import API_BASE from "../../api";
 
 /* ────────────────────────────────────────────────────────────────── */
 /*  UTILITIES                                                         */
 /* ────────────────────────────────────────────────────────────────── */
 
-/** Parse "2:00 PM" → 24-h hours, minutes */
 const parseTime = (timeStr) => {
   if (!timeStr) return { hours: 10, minutes: 0 };
   const [timePart, ampm] = timeStr.split(" ");
@@ -23,7 +23,6 @@ const parseTime = (timeStr) => {
   return { hours, minutes };
 };
 
-/** Returns a Date object for a booking's meeting start */
 const getMeetingDate = (booking) => {
   if (!booking.scheduledDate) return null;
   const [y, m, d]         = booking.scheduledDate.split("-").map(Number);
@@ -31,7 +30,6 @@ const getMeetingDate = (booking) => {
   return new Date(y, m - 1, d, hours, minutes, 0);
 };
 
-/** Human-readable countdown */
 const getCountdown = (booking) => {
   const meeting = getMeetingDate(booking);
   if (!meeting) return null;
@@ -49,20 +47,19 @@ const getCountdown = (booking) => {
   return `Starts in ${days} Days`;
 };
 
-/** Sort: upcoming-confirmed → other confirmed → completed → cancelled */
 const sortBookings = (list) => {
   const now  = Date.now();
   const rank = (b) => {
     const mt = getMeetingDate(b);
-    if (b.status === "Confirmed" && mt && mt > now) return 0;
-    if (b.status === "Confirmed") return 1;
-    if (b.status === "Completed") return 2;
-    return 3; // Cancelled
+    if ((b.status === "Confirmed" || b.status === "Rescheduled") && mt && mt > now) return 0;
+    if (b.status === "Confirmed" || b.status === "Rescheduled") return 1;
+    if (b.status === "pending" || b.status === "Pending") return 2;
+    if (b.status === "Completed" || b.status === "completed") return 3;
+    return 4; // Cancelled
   };
   return [...list].sort((a, b) => rank(a) - rank(b));
 };
 
-/** Format ISO date to readable string */
 const fmtDate = (iso) => {
   if (!iso) return "—";
   const [y, m, d] = iso.split("-").map(Number);
@@ -83,18 +80,27 @@ const StatusBadge = ({ status }) => (
 /* ────────────────────────────────────────────────────────────────── */
 /*  HERO BOOKING CARD                                                 */
 /* ────────────────────────────────────────────────────────────────── */
-const HeroCard = ({ booking, onRebook, navigate }) => {
+const HeroCard = ({ booking, onViewDetails, onComplete }) => {
   const [tick, setTick] = useState(0);
 
-  /* Live countdown tick every minute */
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 60 * 1000);
     return () => clearInterval(id);
   }, []);
 
-  const countdown   = getCountdown(booking);
   const meetingTime = getMeetingDate(booking);
-  const canJoin     = meetingTime && Date.now() >= meetingTime - 5 * 60 * 1000; // 5min early
+  const now = Date.now();
+  
+  const isPending = booking.status === "pending" || booking.status === "Pending";
+  const isCompleted = booking.status === "completed" || booking.status === "Completed";
+  const isCancelled = booking.status === "cancelled" || booking.status === "Cancelled";
+  const isConfirmed = booking.status === "confirmed" || booking.status === "Confirmed" || booking.status === "Rescheduled" || booking.status === "rescheduled";
+
+  const hasPassed = meetingTime && now >= meetingTime;
+  const canJoin = isConfirmed && meetingTime && now >= meetingTime - 5 * 60 * 1000 && !isCompleted && !isCancelled;
+  const canComplete = isConfirmed && hasPassed && !isCompleted && !isCancelled;
+
+  const countdown = getCountdown(booking);
 
   const title = booking.consultationType
     ? `${booking.consultationType} Consultation`
@@ -102,26 +108,23 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
 
   return (
     <div className="bhc-card">
-      {/* Top row */}
       <div className="bhc-top-row">
         <StatusBadge status={booking.status} />
-        {countdown && countdown !== "Meeting passed" && (
+        {countdown && countdown !== "Meeting passed" && !isCompleted && !isCancelled && (
           <span className="bhc-countdown"><span className="material-symbols-outlined" style={{fontSize:"16px"}}>schedule</span> {countdown}</span>
         )}
       </div>
 
-      {/* Title + ID */}
       <h2 className="bhc-title">{title}</h2>
       <p className="bhc-booking-id">Booking ID: {booking.bookingId || "—"}</p>
 
-      {/* Meta grid */}
       <div className="bhc-meta-grid">
         <div className="bhc-meta-item">
           <span className="bhc-meta-icon"><span className="material-symbols-outlined">calendar_today</span></span>
           <div>
             <p className="bhc-meta-label">Scheduled Date</p>
             <p className="bhc-meta-value">
-              {booking.scheduledDateDisplay || fmtDate(booking.scheduledDate) || "TBD"}
+              {isPending ? "Pending Confirmation" : (booking.scheduledDateDisplay || fmtDate(booking.scheduledDate) || "TBD")}
             </p>
           </div>
         </div>
@@ -130,69 +133,73 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
           <span className="bhc-meta-icon"><span className="material-symbols-outlined">access_time</span></span>
           <div>
             <p className="bhc-meta-label">Meeting Time</p>
-            <p className="bhc-meta-value">{booking.scheduledTime || "TBD"} IST</p>
+            <p className="bhc-meta-value">{isPending ? "Pending" : (booking.scheduledTime ? `${booking.scheduledTime} IST` : "TBD")}</p>
           </div>
         </div>
+        
+        {booking.productName && (
+          <div className="bhc-meta-item">
+            <span className="bhc-meta-icon"><span className="material-symbols-outlined">chair</span></span>
+            <div>
+              <p className="bhc-meta-label">Product/Design</p>
+              <p className="bhc-meta-value">{booking.productName}</p>
+            </div>
+          </div>
+        )}
 
-        <div className="bhc-meta-item">
-          <span className="bhc-meta-icon"><span className="material-symbols-outlined">timelapse</span></span>
-          <div>
-            <p className="bhc-meta-label">Duration</p>
-            <p className="bhc-meta-value">{booking.duration || "60 minutes"}</p>
+        {booking.projectType && (
+          <div className="bhc-meta-item">
+            <span className="bhc-meta-icon"><span className="material-symbols-outlined">home</span></span>
+            <div>
+              <p className="bhc-meta-label">Project Type</p>
+              <p className="bhc-meta-value">{booking.projectType} - {booking.propertyType || "N/A"}</p>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="bhc-meta-item">
           <span className="bhc-meta-icon"><span className="material-symbols-outlined">person</span></span>
           <div>
             <p className="bhc-meta-label">Assigned Designer</p>
-            <p className="bhc-meta-value">{booking.designerName || "To be assigned"}</p>
+            <p className="bhc-meta-value">{isPending ? "Pending Assignment" : (booking.designerName || "To be assigned")}</p>
           </div>
         </div>
 
         <div className="bhc-meta-item">
           <span className="bhc-meta-icon"><span className="material-symbols-outlined">videocam</span></span>
           <div>
-            <p className="bhc-meta-label">Meeting Type</p>
-            <p className="bhc-meta-value">Google Meet (Virtual)</p>
-          </div>
-        </div>
-
-        <div className="bhc-meta-item">
-          <span className="bhc-meta-icon"><span className="material-symbols-outlined">chair</span></span>
-          <div>
-            <p className="bhc-meta-label">Consultation Type</p>
-            <p className="bhc-meta-value">{booking.consultationType || "Interior Design"}</p>
+            <p className="bhc-meta-label">Meeting Info</p>
+            <p className="bhc-meta-value">{isPending ? "Link available upon confirmation" : (booking.meetingUrl ? "Google Meet" : "Link not available yet")}</p>
           </div>
         </div>
       </div>
 
-      {/* Actions */}
       <div className="bhc-actions">
-        <button
-          className="bhc-view-btn"
-          onClick={() =>
-            booking.meetingUrl && window.open(booking.meetingUrl, "_blank")
-          }
-        >
+        <button className="bhc-view-btn" onClick={() => onViewDetails(booking)}>
           View Details
         </button>
 
-        <button
-          className={`bhc-join-btn ${!canJoin ? "bhc-join-disabled" : ""}`}
-          disabled={!canJoin}
-          onClick={() =>
-            booking.meetingUrl && window.open(booking.meetingUrl, "_blank")
-          }
-          title={canJoin ? "Join Google Meet" : "Available 5 minutes before the meeting"}
-        >
-          {canJoin ? "Join Meeting" : "Join Meeting"}
-        </button>
+        {canComplete ? (
+          <button className="bhc-join-btn" onClick={() => onComplete(booking.bookingId)}>
+            Mark Completed
+          </button>
+        ) : (
+          <button
+            className={`bhc-join-btn ${(!canJoin || !booking.meetingUrl) ? "bhc-join-disabled" : ""}`}
+            disabled={!canJoin || !booking.meetingUrl}
+            onClick={() => booking.meetingUrl && window.open(booking.meetingUrl, "_blank")}
+            title={canJoin ? "Join Google Meet" : "Available 5 minutes before the meeting"}
+          >
+            Join Meeting
+          </button>
+        )}
       </div>
 
-      {!canJoin && booking.status === "Confirmed" && (
+      {!canJoin && !isCompleted && !isCancelled && isConfirmed && !canComplete && (
         <p className="bhc-join-note">
-          The Join Meeting button will be enabled 5 minutes before your scheduled time.
+          {booking.meetingUrl 
+            ? "The Join Meeting button will be enabled 5 minutes before your scheduled time." 
+            : "Meeting link will be provided shortly."}
         </p>
       )}
     </div>
@@ -202,7 +209,7 @@ const HeroCard = ({ booking, onRebook, navigate }) => {
 /* ────────────────────────────────────────────────────────────────── */
 /*  SMALL BOOKING CARD (history)                                     */
 /* ────────────────────────────────────────────────────────────────── */
-const SmallCard = ({ booking, navigate }) => {
+const SmallCard = ({ booking, onViewDetails }) => {
   const roomImages = {
     "Living Room":  "/livingRoom.png",
     "Kitchen":      "/kitchen.png",
@@ -213,6 +220,7 @@ const SmallCard = ({ booking, navigate }) => {
   };
 
   const img = roomImages[booking.consultationType] || "/livingRoom.png";
+  const isPending = booking.status === "pending" || booking.status === "Pending";
 
   return (
     <div className="bk-card">
@@ -235,25 +243,14 @@ const SmallCard = ({ booking, navigate }) => {
             <span className="material-symbols-outlined" style={{fontSize:"16px"}}>calendar_today</span>
             <span>
               <strong>Meeting:</strong>{" "}
-              {booking.scheduledDateDisplay || fmtDate(booking.scheduledDate) || "TBD"}
-              {booking.scheduledTime ? ` at ${booking.scheduledTime}` : ""}
-            </span>
-          </div>
-          <div className="bk-meta-row">
-            <span className="material-symbols-outlined" style={{fontSize:"16px"}}>event_note</span>
-            <span>
-              <strong>Booked:</strong>{" "}
-              {booking.createdAt?.toDate
-                ? booking.createdAt.toDate().toLocaleDateString("en-IN", {
-                    day: "numeric", month: "short", year: "numeric",
-                  })
-                : "—"}
+              {isPending ? "Pending" : (booking.scheduledDateDisplay || fmtDate(booking.scheduledDate) || "TBD")}
+              {!isPending && booking.scheduledTime ? ` at ${booking.scheduledTime}` : ""}
             </span>
           </div>
           <div className="bk-meta-row">
             <span className="material-symbols-outlined" style={{fontSize:"16px"}}>person</span>
             <span>
-              <strong>Designer:</strong> {booking.designerName || "To be assigned"}
+              <strong>Designer:</strong> {isPending ? "Pending" : (booking.designerName || "To be assigned")}
             </span>
           </div>
           {booking.bookingId && (
@@ -267,20 +264,61 @@ const SmallCard = ({ booking, navigate }) => {
         </div>
 
         <div className="bk-card-actions">
-          {booking.meetingUrl && (
-            <button
-              className="bk-view-btn"
-              onClick={() => window.open(booking.meetingUrl, "_blank")}
-            >
-              View Details
-            </button>
-          )}
-          <button
-            className="bk-rebook-btn"
-            onClick={() => navigate("/?consultancy=true")}
-          >
-            Rebook Consultation
+          <button className="bk-view-btn" style={{width: "100%"}} onClick={() => onViewDetails(booking)}>
+            View Details
           </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ────────────────────────────────────────────────────────────────── */
+/*  DETAILS MODAL                                                     */
+/* ────────────────────────────────────────────────────────────────── */
+const DetailsModal = ({ booking, onClose }) => {
+  if (!booking) return null;
+  const isPending = booking.status === "pending" || booking.status === "Pending";
+
+  return (
+    <div className="popup-overlay" onClick={onClose} style={{ zIndex: 1000 }}>
+      <div className="popup-box" style={{ width: '600px', textAlign: 'left', padding: '30px' }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h2 style={{ margin: 0, fontSize: '24px', color: '#500606' }}>Booking Details</h2>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer', outline: 'none' }}>✕</button>
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontSize: '15px', color: '#4B4848' }}>
+          <div><strong>Booking ID:</strong> <br/>{booking.bookingId}</div>
+          <div><strong>Status:</strong> <br/><StatusBadge status={booking.status} /></div>
+          
+          <div style={{ gridColumn: '1 / -1', borderTop: '1px dashed #ccc', margin: '10px 0' }}></div>
+          
+          <div><strong>Project Type:</strong> <br/>{booking.projectType || "N/A"}</div>
+          <div><strong>Property Type:</strong> <br/>{booking.propertyType || "N/A"}</div>
+          <div><strong>Space:</strong> <br/>{booking.spaceType || booking.consultationType || "N/A"}</div>
+          <div><strong>Dimensions:</strong> <br/>{booking.dimensions || "N/A"}</div>
+          <div><strong>Ceiling Height:</strong> <br/>{booking.ceilingHeight || "N/A"}</div>
+          <div><strong>Budget:</strong> <br/>{booking.budget || "N/A"}</div>
+          <div><strong>Interior Style:</strong> <br/>{booking.interiorStyle || "N/A"}</div>
+          <div><strong>Theme:</strong> <br/>{booking.preferredTheme || "N/A"}</div>
+          
+          <div style={{ gridColumn: '1 / -1', borderTop: '1px dashed #ccc', margin: '10px 0' }}></div>
+
+          <div><strong>Confirmed Date:</strong> <br/>{isPending ? "Pending" : (fmtDate(booking.scheduledDate) || "N/A")}</div>
+          <div><strong>Confirmed Time:</strong> <br/>{isPending ? "Pending" : (booking.scheduledTime || "N/A")}</div>
+          <div><strong>Designer:</strong> <br/>{isPending ? "Pending" : (booking.designerName || "To be assigned")}</div>
+          <div><strong>Meeting:</strong> <br/>{isPending ? "N/A" : (booking.meetingUrl ? <a href={booking.meetingUrl} target="_blank" rel="noreferrer" style={{color: '#500606'}}>Google Meet</a> : "Link not ready")}</div>
+          
+          {booking.description && (
+            <div style={{ gridColumn: '1 / -1' }}>
+              <strong>Description:</strong> <br/>{booking.description}
+            </div>
+          )}
+        </div>
+        
+        <div style={{ marginTop: '25px', textAlign: 'center' }}>
+          <button className="pop-up-btn" style={{ width: '120px', padding: '10px', background: '#500606', color: '#fff', border: 'none', cursor: 'pointer' }} onClick={onClose}>Close</button>
         </div>
       </div>
     </div>
@@ -312,6 +350,7 @@ const Bookings = () => {
   const [user,     setUser]     = useState(null);
   const [bookings, setBookings] = useState([]);
   const [loading,  setLoading]  = useState(true);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   /* ── Auth listener ── */
   useEffect(() => {
@@ -321,21 +360,62 @@ const Bookings = () => {
 
   /* ── Load bookings from Firestore ── */
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+        // Only set loading false if we know there is no user
+        const timeout = setTimeout(() => {
+            if(!auth.currentUser) setLoading(false);
+        }, 1000);
+        return () => clearTimeout(timeout);
+    }
 
+    // Query global bookings collection and filter locally by user.uid 
+    // to avoid strict composite index requirements (or use where clause).
     const q = query(
-      collection(db, "consultancies", user.uid, "bookings"),
-      orderBy("createdAt", "desc")
+      collection(db, "bookings"),
+      where("userId", "==", user.uid)
     );
 
     const unsub = onSnapshot(q, (snap) => {
       const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      // Client side sort
+      docs.sort((a, b) => {
+        const tA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+        const tB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+        return tB - tA; // desc
+      });
       setBookings(docs);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching bookings:", error);
       setLoading(false);
     });
 
     return () => unsub();
   }, [user]);
+
+  const handleComplete = async (bookingId) => {
+    if (!window.confirm("Are you sure you want to mark this consultation as completed?")) return;
+    
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const res = await fetch(`${API_BASE}/complete-booking`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ bookingId })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Failed to mark as completed.");
+      } else {
+        alert("Booking marked as completed.");
+      }
+    } catch (err) {
+      alert("An error occurred. Please try again.");
+    }
+  };
 
   /* ── Sort ── */
   const sorted = sortBookings(bookings);
@@ -343,7 +423,7 @@ const Bookings = () => {
   /* ── Find next upcoming (hero) ── */
   const now    = Date.now();
   const hero   = sorted.find(
-    (b) => b.status === "Confirmed" && getMeetingDate(b) && getMeetingDate(b) > now
+    (b) => (b.status === "Confirmed" || b.status === "Rescheduled") && getMeetingDate(b) && getMeetingDate(b) > now
   ) || sorted[0];
 
   const history = sorted.filter((b) => b.id !== hero?.id);
@@ -385,7 +465,7 @@ const Bookings = () => {
                     ? "Upcoming Consultation"
                     : "Latest Consultation"}
                 </h2>
-                <HeroCard booking={hero} navigate={navigate} />
+                <HeroCard booking={hero} onViewDetails={setSelectedBooking} onComplete={handleComplete} />
               </section>
             )}
 
@@ -395,7 +475,7 @@ const Bookings = () => {
                 <h2 className="bk-section-label">All Consultations</h2>
                 <div className="bk-history-grid">
                   {history.map((b) => (
-                    <SmallCard key={b.id} booking={b} navigate={navigate} />
+                    <SmallCard key={b.id} booking={b} onViewDetails={setSelectedBooking} />
                   ))}
                 </div>
               </section>
@@ -405,6 +485,10 @@ const Bookings = () => {
       </div>
 
       <Footer />
+
+      {selectedBooking && (
+        <DetailsModal booking={selectedBooking} onClose={() => setSelectedBooking(null)} />
+      )}
     </div>
   );
 };

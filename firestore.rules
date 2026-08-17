@@ -1,0 +1,73 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      // Check if the requesting user's document has role == "admin"
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ── USERS COLLECTION ──
+    match /users/{userId} {
+      // Customers can read/write their own profile but cannot change their role.
+      // Admins can read/write everything.
+      allow read: if isOwner(userId) || isAdmin();
+      allow update: if isAdmin() || (isOwner(userId) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+      allow create: if isOwner(userId) && request.resource.data.role == 'customer';
+      allow delete: if isAdmin();
+    }
+
+    // ── BOOKINGS COLLECTION (GLOBAL) ──
+    // Moving bookings to a global collection 'bookings' is usually better for admin dashboards
+    // than a subcollection, though if it's a subcollection consultancies/{userId}/bookings, it works similarly.
+    match /bookings/{bookingId} {
+      // Customer can read their own bookings
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      
+      // Customers can create pending bookings
+      allow create: if isOwner(request.resource.data.userId) 
+                    && request.resource.data.status == 'pending'
+                    && !('designerName' in request.resource.data)
+                    && !('meetingUrl' in request.resource.data)
+                    && !('confirmedAt' in request.resource.data);
+
+      // Only admins can change status to confirmed, assign designers, add meeting links, etc.
+      // Customers can only update if they aren't touching protected fields (e.g., if they cancel)
+      allow update: if isAdmin() || 
+                    (isOwner(resource.data.userId) && 
+                     !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'designerName', 'meetingUrl', 'scheduledDate', 'scheduledTime', 'confirmedAt']));
+      
+      allow delete: if isAdmin();
+    }
+
+    // ── OLD SUBCOLLECTION STRUCTURE (Fallback) ──
+    match /consultancies/{userId}/bookings/{bookingId} {
+      allow read: if isAdmin() || isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.status == 'pending';
+      // Same protection against altering status, etc.
+      allow update: if isAdmin() || (isOwner(userId) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'designerName', 'meetingUrl', 'scheduledDate', 'scheduledTime']));
+      allow delete: if isAdmin();
+    }
+
+    // ── NOTIFICATIONS COLLECTION ──
+    match /notifications/{notificationId} {
+      // Only admins can read/write admin notifications
+      allow read, write: if isAdmin();
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

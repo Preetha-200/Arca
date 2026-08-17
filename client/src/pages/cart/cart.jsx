@@ -76,10 +76,9 @@ const Cart = () => {
             // Write order document
             batch.set(orderRef, {
                 orderId,
-                items:     items.map(({ productId, title, price, image, qty }) => ({
-                    productId, title, price, image, qty,
+                items:     items.map(({ productId, title, image, qty }) => ({
+                    productId, title, image, qty,
                 })),
-                total:     total,
                 status:    "Confirmed",
                 createdAt: serverTimestamp(),
             });
@@ -100,7 +99,6 @@ const Cart = () => {
     };
 
     /* ── Totals ── */
-    const total    = items.reduce((sum, i) => sum + (i.price || 0) * (i.qty || 1), 0);
     const itemCount = items.reduce((sum, i) => sum + (i.qty || 1), 0);
 
     return (
@@ -144,10 +142,6 @@ const Cart = () => {
                                             {item.title}
                                         </h3>
                                         <p className="cart-item-size">{item.size}</p>
-                                        <p className="cart-item-price">
-                                            ₹{(item.price || 0).toLocaleString("en-IN")}
-                                            <span className="cart-item-unit"> / design</span>
-                                        </p>
                                     </div>
 
                                     <div className="cart-item-controls">
@@ -166,9 +160,6 @@ const Cart = () => {
                                                 +
                                             </button>
                                         </div>
-                                        <p className="cart-item-subtotal">
-                                            ₹{((item.price || 0) * (item.qty || 1)).toLocaleString("en-IN")}
-                                        </p>
                                         <button
                                             className="cart-remove-btn"
                                             onClick={() => handleRemove(item.productId)}
@@ -188,22 +179,15 @@ const Cart = () => {
                                 {items.map((item) => (
                                     <div className="cart-summary-row" key={item.id}>
                                         <span>{item.title}</span>
-                                        <span>
-                                            ₹{((item.price || 0) * (item.qty || 1)).toLocaleString("en-IN")}
-                                        </span>
+                                        <span>Qty: {item.qty || 1}</span>
                                     </div>
                                 ))}
                             </div>
 
                             <div className="cart-summary-divider" />
 
-                            <div className="cart-summary-total">
-                                <span>Total</span>
-                                <span>₹{total.toLocaleString("en-IN")}</span>
-                            </div>
-
                             <p className="cart-summary-note">
-                                * Prices are indicative. Final quote provided by ARCA designer.
+                                * Final pricing will be provided by an ARCA designer during the consultation.
                             </p>
 
                             <button

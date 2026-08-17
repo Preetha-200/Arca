@@ -265,33 +265,7 @@ const Index = () => {
                     /* Persist mobile for future sessions */
                     if (mobile) localStorage.setItem("userMobile", mobile);
 
-                    /* ── Save rich booking to Firestore ── */
-                    try {
-                        await addDoc(
-                            collection(db, "consultancies", currentUser.uid, "bookings"),
-                            {
-                                userId:               currentUser.uid,
-                                name,
-                                email,
-                                mobile,
-                                city,
-                                consultationType:     booking?.consultationType || consultationType || "Interior Design",
-                                bookingId:            booking?.bookingId            || "",
-                                bookingDate:          new Date().toISOString(),
-                                scheduledDate:        booking?.scheduledDate        || "",
-                                scheduledDateDisplay: booking?.scheduledDateDisplay || "",
-                                scheduledTime:        booking?.scheduledTime        || "",
-                                designerName:         booking?.designerName         || "",
-                                meetingUrl:           booking?.meetingUrl            || "",
-                                duration:             booking?.duration              || "60 minutes",
-                                meetingType:          booking?.meetingType           || "Google Meet (Virtual)",
-                                status:               booking?.status                || "Confirmed",
-                                createdAt:            serverTimestamp(),
-                            }
-                        );
-                    } catch (fsErr) {
-                        console.warn("Firestore booking save failed (non-critical):", fsErr);
-                    }
+
                 }
 
                 setBookingId(booking?.bookingId || "");

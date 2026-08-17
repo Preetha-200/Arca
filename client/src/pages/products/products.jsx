@@ -20,9 +20,7 @@ const CATEGORIES = [
 ];
 
 const SORT_OPTIONS = [
-    { value: "default",   label: "Default" },
-    { value: "price-asc", label: "Price: Low → High" },
-    { value: "price-desc",label: "Price: High → Low" },
+    { value: "default",   label: "Sort" },
     { value: "latest",    label: "Latest" },
     { value: "popular",   label: "Popular" },
 ];
@@ -36,7 +34,6 @@ const Products = () => {
     /* ── State ── */
     const [search,       setSearch]       = useState("");
     const [sortBy,       setSortBy]       = useState("default");
-    const [priceMax,     setPriceMax]     = useState(500000);
     const [filterMat,    setFilterMat]    = useState("");
     const [showFilters,  setShowFilters]  = useState(false);
     const [wishlisted,   setWishlisted]   = useState({}); // { productId: bool }
@@ -58,23 +55,18 @@ const Products = () => {
             );
         }
 
-        // Price
-        list = list.filter((p) => (p.price || 0) <= priceMax);
-
         // Material
         if (filterMat) list = list.filter((p) => p.material === filterMat);
 
         // Sort
         switch (sortBy) {
-            case "price-asc":  list = [...list].sort((a, b) => a.price - b.price);          break;
-            case "price-desc": list = [...list].sort((a, b) => b.price - a.price);          break;
             case "latest":     list = [...list].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); break;
             case "popular":    list = [...list].sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0)); break;
             default: break;
         }
 
         return list;
-    }, [category, search, priceMax, filterMat, sortBy]);
+    }, [category, search, filterMat, sortBy]);
 
     /* ── Wishlist toggle ── */
     const toggleWishlist = async (e, product) => {
@@ -94,7 +86,6 @@ const Products = () => {
                 await setDoc(ref, {
                     productId: product.id,
                     title:     product.title,
-                    price:     product.price,
                     image:     product.image,
                     size:      product.size,
                     addedAt:   new Date().toISOString(),
@@ -131,7 +122,7 @@ const Products = () => {
 
             {/* ── Hero ── */}
             <div className="products-hero">
-                <h1>{label.toUpperCase()}</h1>
+                <h1>{label}</h1>
             </div>
 
             {/* ── Toolbar ── */}
@@ -197,24 +188,6 @@ const Products = () => {
                         </div>
                     </div>
 
-                    {/* Price range */}
-                    <div className="filter-group">
-                        <label>Max Price: ₹{priceMax.toLocaleString("en-IN")}</label>
-                        <input
-                            type="range"
-                            min="50000"
-                            max="500000"
-                            step="5000"
-                            value={priceMax}
-                            onChange={(e) => setPriceMax(Number(e.target.value))}
-                            className="filter-range"
-                        />
-                        <div className="filter-range-labels">
-                            <span>₹50,000</span>
-                            <span>₹5,00,000</span>
-                        </div>
-                    </div>
-
                     {/* Material */}
                     <div className="filter-group">
                         <label>Material</label>
@@ -240,7 +213,7 @@ const Products = () => {
                     {/* Clear */}
                     <button
                         className="filter-clear-btn"
-                        onClick={() => { setSearch(""); setPriceMax(500000); setFilterMat(""); setSortBy("default"); }}
+                        onClick={() => { setSearch(""); setFilterMat(""); setSortBy("default"); }}
                     >
                         Clear All Filters
                     </button>
@@ -290,21 +263,14 @@ const Products = () => {
                                 onClick={() => navigate(`/product/${product.id}`)}
                             >
                                 <h2>{product.title}</h2>
-                                <p className="product-size">{product.size}</p>
-                                <p className="product-material">{product.material}</p>
-                                <p className="product-price">
-                                    ₹{product.price.toLocaleString("en-IN")}
-                                </p>
+                                <p className="product-size">Size: {product.size}</p>
                             </div>
 
                             {/* Buttons */}
                             <div className="product-buttons">
                                 <button
                                     className="quote"
-                                    onClick={() =>
-                                        document.getElementById("designs") &&
-                                        navigate("/")
-                                    }
+                                    onClick={() => navigate(`/?consultancy=true&product_id=${product.id}`)}
                                 >
                                     Get Quote
                                 </button>
@@ -312,7 +278,7 @@ const Products = () => {
                                     className="view"
                                     onClick={() => navigate(`/product/${product.id}`)}
                                 >
-                                    View
+                                    View Details
                                 </button>
                             </div>
                         </div>

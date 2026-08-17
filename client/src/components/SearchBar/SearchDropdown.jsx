@@ -91,9 +91,6 @@ const ProductRow = ({ product, onSelect, focused }) => (
       <span className="sd-product-name">{product.title}</span>
       <span className="sd-product-meta">{product.roomType}</span>
     </div>
-    <span className="sd-product-price">
-      ₹{product.price.toLocaleString("en-IN")}
-    </span>
   </div>
 );
 

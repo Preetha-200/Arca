@@ -2,6 +2,15 @@ const express = require("express");
 const cors    = require("cors");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
+const { initializeApp, getApps } = require("firebase-admin/app");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const { getAuth } = require("firebase-admin/auth");
+
+if (!getApps().length) {
+  initializeApp();
+}
+const db = getFirestore();
+
 
 const ALLOWED_ORIGINS = [
   "https://arca-seven-coral.vercel.app",  // Production Vercel frontend
@@ -275,7 +284,7 @@ const buildUserEmail = (data) => {
               </td>
             </tr>
 
-            <tr>
+            ${meetingUrl ? `<tr>
               <td style="padding:13px 20px;color:#999;font-size:13px;
                 font-family:Arial,sans-serif;">
                 Google Meet Link
@@ -285,14 +294,22 @@ const buildUserEmail = (data) => {
                   ${meetingUrl}
                 </a>
               </td>
-            </tr>
+            </tr>` : `<tr>
+              <td style="padding:13px 20px;color:#999;font-size:13px;
+                font-family:Arial,sans-serif;">
+                Meeting Link
+              </td>
+              <td style="padding:13px 20px;font-size:13px;font-family:Arial,sans-serif;color:#555">
+                To be provided by your designer
+              </td>
+            </tr>`}
 
           </table>
         </td>
       </tr>
 
       <!-- ── JOIN BUTTON ── -->
-      <tr>
+      ${meetingUrl ? `<tr>
         <td style="padding:0 40px 36px;text-align:center;">
           <a href="${meetingUrl}"
             style="display:inline-block;background:#470606;color:#ffffff;
@@ -301,7 +318,7 @@ const buildUserEmail = (data) => {
             JOIN MEETING →
           </a>
         </td>
-      </tr>
+      </tr>` : ''}
 
       <!-- ── PREPARATION CHECKLIST ── -->
       <tr>
@@ -404,11 +421,7 @@ const buildUserEmail = (data) => {
           <p style="margin:0;color:#555;font-size:10px;line-height:1.8;
             font-family:Arial,sans-serif;text-align:center;">
             <strong style="color:#666;">Disclaimer:</strong>
-            This platform has been developed as a portfolio and educational project to demonstrate
-            modern web application development, UI/UX design, authentication, booking workflows
-            and full-stack integration. The consultation scheduling and meeting information are
-            part of this demonstration environment and may not represent commercial interior
-            design services.
+            This platform is a demonstration environment created to showcase modern web technologies and interior design concepts. Please note that ARCA is a portfolio project and this booking does not represent a commercial interior design agreement.
           </p>
         </td>
       </tr>
@@ -513,7 +526,12 @@ app.post("/verify-otp", (req, res) => {
    ────────────────────────────────────────────────────────────────── */
 app.post("/book-consultancy", async (req, res) => {
   try {
-    const { name, email, mobile, city, consultationType, firebaseAuthenticated } = req.body;
+    const { 
+      name, email, mobile, city, consultationType, firebaseAuthenticated,
+      projectType, propertyType, spaceType, dimensions, ceilingHeight,
+      budget, interiorStyle, preferredTheme, description, preferredDate,
+      preferredTime, productId, productName, referenceImages
+    } = req.body;
 
     /*
      * OTP gate:
@@ -525,19 +543,46 @@ app.post("/book-consultancy", async (req, res) => {
     }
 
     /* ── Generate scheduling metadata ── */
-    const meta = generateBookingMeta(consultationType || "Interior Design");
+    const bookingData = {
+      name,
+      email,
+      mobile: mobile || "",
+      city: city || "",
+      consultationType: consultationType || "Interior Design",
+      projectType: projectType || "",
+      propertyType: propertyType || "",
+      spaceType: spaceType || "",
+      dimensions: dimensions || "",
+      ceilingHeight: ceilingHeight || "",
+      budget: budget || "",
+      interiorStyle: interiorStyle || "",
+      preferredTheme: preferredTheme || "",
+      description: description || "",
+      preferredDate: preferredDate || "",
+      preferredTime: preferredTime || "",
+      productId: productId || "",
+      productName: productName || "",
+      referenceImages: referenceImages || [],
+      status: "pending",
+      createdAt: FieldValue.serverTimestamp(),
+    };
+    
+    const bookingRef = await db.collection("bookings").add(bookingData);
+    const bookingId = bookingRef.id;
+    bookingData.bookingId = bookingId;
+
 
     /* ── Admin notification email ── */
     const adminMail = {
       from:    process.env.EMAIL_USER,
       to:      process.env.EMAIL_USER,
-      subject: `New ARCA Booking — ${meta.bookingId}`,
+      subject: `New ARCA Booking — ${bookingId}`,
       html: `
         <div style="font-family:Arial,sans-serif;padding:24px;">
           <h2 style="color:#470606;">New Consultancy Booking</h2>
           <table>
             <tr><td style="padding:6px 16px 6px 0;color:#888;">Booking ID</td>
-                <td><strong>${meta.bookingId}</strong></td></tr>
+                <td><strong>${bookingId}</strong></td></tr>
             <tr><td style="padding:6px 16px 6px 0;color:#888;">Name</td>
                 <td>${name}</td></tr>
             <tr><td style="padding:6px 16px 6px 0;color:#888;">Email</td>
@@ -547,32 +592,35 @@ app.post("/book-consultancy", async (req, res) => {
             <tr><td style="padding:6px 16px 6px 0;color:#888;">City</td>
                 <td>${city}</td></tr>
             <tr><td style="padding:6px 16px 6px 0;color:#888;">Consultation</td>
-                <td>${meta.consultationType}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Scheduled</td>
-                <td>${meta.scheduledDateDisplay} at ${meta.scheduledTime}</td></tr>
-            <tr><td style="padding:6px 16px 6px 0;color:#888;">Designer</td>
-                <td>${meta.designerName}</td></tr>
-          </table>
+                <td>${bookingData.consultationType}</td></tr>
+            <tr><td style="padding:6px 16px 6px 0;color:#888;">Project Type</td>
+                <td>${bookingData.projectType || 'N/A'} - ${bookingData.propertyType || 'N/A'}</td></tr>
+            <tr><td style="padding:6px 16px 6px 0;color:#888;">Space</td>
+                <td>${bookingData.spaceType || 'N/A'} ${bookingData.dimensions ? `(${bookingData.dimensions})` : ''}</td></tr>
+            <tr><td style="padding:6px 16px 6px 0;color:#888;">Budget</td>
+                <td>${bookingData.budget || 'N/A'}</td></tr>
+            <tr><td style="padding:6px 16px 6px 0;color:#888;">Product</td>
+                <td>${bookingData.productName || 'None'}</td></tr>
+                                  </table>
         </div>
       `,
     };
 
-    /* ── User confirmation email ── */
-    const userMail = {
-      from:    process.env.EMAIL_USER,
-      to:      email,
-      subject: `Your ARCA Interior Design Consultation Has Been Scheduled — ${meta.bookingId}`,
-      html:    buildUserEmail({ name, ...meta }),
-    };
+    
 
     /* ── Send both emails ── */
-    const [adminResult, userResult] = await Promise.allSettled([
-      transporter.sendMail(adminMail),
-      transporter.sendMail(userMail),
-    ]);
+    const adminResult = await transporter.sendMail(adminMail);
+    console.log("Admin email sent.");
+    
+    await db.collection("notifications").add({
+      type: "new_booking",
+      title: "New Consultation Booking",
+      message: `New booking from ${name} for ${bookingData.consultationType}.`,
+      bookingId: bookingId,
+      read: false,
+      createdAt: FieldValue.serverTimestamp()
+    });
 
-    console.log("Admin email:", adminResult.status);
-    console.log("User email:", userResult.status);
 
     /* ── Cleanup verified email (guests only) ── */
     if (!firebaseAuthenticated) {
@@ -582,11 +630,211 @@ app.post("/book-consultancy", async (req, res) => {
     /* ── Return metadata to client for Firestore storage ── */
     res.status(200).json({
       message: "Consultancy booked successfully",
-      booking: meta,
+      booking: bookingData,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to process booking" });
+  }
+});
+
+
+/* ──────────────────────────────────────────────────────────────────
+   ADMIN: CONFIRM BOOKING
+   ────────────────────────────────────────────────────────────────── */
+app.post("/admin/confirm-booking", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Missing or invalid authorization header" });
+    }
+    const idToken = authHeader.split("Bearer ")[1];
+    
+    let decodedToken;
+    try {
+      decodedToken = await getAuth().verifyIdToken(idToken);
+    } catch (err) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    
+    const uid = decodedToken.uid;
+    const userDoc = await db.collection("users").doc(uid).get();
+    
+    if (!userDoc.exists || userDoc.data().role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    const { bookingId, scheduledDate, scheduledTime, assignedDesigner } = req.body;
+    
+    if (!bookingId || !scheduledDate || !scheduledTime || !assignedDesigner) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+    
+    const bookingRef = db.collection("bookings").doc(bookingId);
+    const bookingDoc = await bookingRef.get();
+    
+    if (!bookingDoc.exists) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    
+    const booking = bookingDoc.data();
+    
+    if (booking.status === "completed" || booking.status === "cancelled") {
+      return res.status(400).json({ message: `Cannot confirm a ${booking.status} booking.` });
+    }
+    
+    const timeRegex = /^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i;
+    const match = scheduledTime.match(timeRegex);
+    if (!match) {
+      return res.status(400).json({ message: "Invalid time format. Use HH:MM AM/PM or HH:MM" });
+    }
+    
+    let hours = parseInt(match[1]);
+    const minutes = parseInt(match[2]);
+    const ampm = match[3];
+    
+    if (ampm) {
+      if (ampm.toUpperCase() === "PM" && hours < 12) hours += 12;
+      if (ampm.toUpperCase() === "AM" && hours === 12) hours = 0;
+    }
+    
+    const scheduleDateObj = new Date(`${scheduledDate}T00:00:00`);
+    scheduleDateObj.setHours(hours, minutes, 0, 0);
+    
+    if (isNaN(scheduleDateObj.getTime())) {
+      return res.status(400).json({ message: "Invalid date or time." });
+    }
+    
+    if (scheduleDateObj.getTime() - Date.now() < 60 * 60 * 1000) {
+      return res.status(400).json({ message: "Scheduled time must be at least 1 hour in the future." });
+    }
+    
+    await bookingRef.update({
+      status: "confirmed",
+      scheduledDate,
+      scheduledTime,
+      designerName: assignedDesigner,
+      confirmedAt: FieldValue.serverTimestamp(),
+      confirmedBy: uid
+    });
+    
+    const emailData = {
+      name: booking.name,
+      bookingId: bookingId,
+      scheduledDateDisplay: scheduleDateObj.toLocaleDateString("en-IN", {
+        weekday: "long", year: "numeric", month: "long", day: "numeric"
+      }),
+      scheduledTime,
+      designerName: assignedDesigner,
+      meetingUrl: "",
+      consultationType: booking.consultationType
+    };
+    
+    const userMail = {
+      from: process.env.EMAIL_USER,
+      to: booking.email,
+      subject: `Your ARCA Interior Design Consultation is Confirmed — ${bookingId}`,
+      html: buildUserEmail(emailData)
+    };
+    
+    try {
+      await transporter.sendMail(userMail);
+    } catch(err) {
+      console.error("Failed to send confirmation email:", err);
+    }
+    
+    return res.status(200).json({
+      success: true,
+      bookingId,
+      status: "confirmed",
+      scheduledDate,
+      scheduledTime,
+      assignedDesigner
+    });
+    
+  } catch (error) {
+    console.error("Confirm booking error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+/* ──────────────────────────────────────────────────────────────────
+   CUSTOMER ACTIONS
+   ────────────────────────────────────────────────────────────────── */
+
+app.post("/complete-booking", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const token = authHeader.split("Bearer ")[1];
+    let decodedToken;
+    try {
+      decodedToken = await getAuth().verifyIdToken(token);
+    } catch (e) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const uid = decodedToken.uid;
+    const { bookingId } = req.body;
+
+    if (!bookingId) {
+      return res.status(400).json({ message: "bookingId is required" });
+    }
+
+    // Since the booking belongs to the user, we verify ownership later
+    const bookingRef = db.collection("bookings").doc(bookingId);
+    const bookingDoc = await bookingRef.get();
+
+    if (!bookingDoc.exists) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    const booking = bookingDoc.data();
+
+    // Verify ownership
+    if (booking.userId !== uid) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    // Must be confirmed or rescheduled to be marked completed
+    if (booking.status !== "Confirmed" && booking.status !== "Rescheduled") {
+      return res.status(400).json({ message: "Booking must be confirmed before it can be completed." });
+    }
+
+    // Check if the scheduled time has passed
+    if (booking.scheduledDate && booking.scheduledTime) {
+      const parseTime = (timeStr) => {
+        if (!timeStr) return { hours: 10, minutes: 0 };
+        const [timePart, ampm] = timeStr.split(" ");
+        let [hours, minutes]   = timePart.split(":").map(Number);
+        if (ampm === "PM" && hours !== 12) hours += 12;
+        if (ampm === "AM" && hours === 12) hours = 0;
+        return { hours, minutes };
+      };
+
+      const [y, m, d] = booking.scheduledDate.split("-").map(Number);
+      const { hours, minutes } = parseTime(booking.scheduledTime);
+      const meetingTime = new Date(y, m - 1, d, hours, minutes, 0).getTime();
+      
+      if (Date.now() < meetingTime) {
+        return res.status(400).json({ message: "Cannot complete booking before the scheduled meeting time." });
+      }
+    } else {
+      return res.status(400).json({ message: "Booking does not have a scheduled time." });
+    }
+
+    await bookingRef.update({
+      status: "Completed",
+      completedAt: FieldValue.serverTimestamp()
+    });
+
+    res.status(200).json({ message: "Booking marked as completed." });
+  } catch (error) {
+    console.error("Error completing booking:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

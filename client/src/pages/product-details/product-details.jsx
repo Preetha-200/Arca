@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
-    doc, deleteDoc, getDoc,
+    doc, deleteDoc, getDoc, setDoc,
     collection, addDoc, onSnapshot, query, orderBy, serverTimestamp,
 } from "firebase/firestore";
 
@@ -12,6 +12,7 @@ import { products, getProductById } from "../../data/products";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import Loader from "../../components/Loader/Loader";
+import "../products/products.css"; // Import product card styles
 import "./product-details.css";
 
 /* ── Star Rating Component ── */
@@ -42,6 +43,11 @@ const ProductDetails = () => {
     const { showToast, ToastContainer } = useToast();
 
     const product = getProductById(id);
+
+    /* ── Scroll to top on navigation ── */
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [id]);
 
     const [wishlisted,   setWishlisted]   = useState(false);
     const [reviews,      setReviews]      = useState([]);
@@ -85,7 +91,6 @@ const ProductDetails = () => {
                 await setDoc(ref, {
                     productId: product.id,
                     title:     product.title,
-                    price:     product.price,
                     image:     product.image,
                     size:      product.size,
                     addedAt:   new Date().toISOString(),
@@ -106,9 +111,7 @@ const ProductDetails = () => {
             navigate("/signin");
             return;
         }
-        // Navigate to home page with room type pre-selected, auto-scroll to form
-        const room = encodeURIComponent(product.roomType || "Interior Design");
-        navigate(`/?consultancy=true&room=${room}`);
+        navigate(`/?consultancy=true&product_id=${product.id}`);
     };
 
     /* ── Submit review ── */
@@ -144,7 +147,25 @@ const ProductDetails = () => {
     /* ── Related products ── */
     const related = products
         .filter((p) => p.category === product?.category && p.id !== product?.id)
-        .slice(0, 3);
+        .slice(0, 5);
+
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") setIsLightboxOpen(false);
+        };
+        if (isLightboxOpen) {
+            window.addEventListener("keydown", handleKeyDown);
+            document.body.style.overflow = "hidden"; // prevent scrolling when open
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            document.body.style.overflow = "";
+        };
+    }, [isLightboxOpen]);
 
     if (!product) {
         return (
@@ -166,7 +187,12 @@ const ProductDetails = () => {
             <div className="product-details">
                 {/* Left: Image */}
                 <div className="product-details-left">
-                    <img src={product.image} alt={product.title} />
+                    <img 
+                        src={product.image} 
+                        alt={product.title} 
+                        onClick={() => setIsLightboxOpen(true)}
+                        style={{ cursor: "zoom-in" }}
+                    />
                 </div>
 
                 {/* Right: Info */}
@@ -199,14 +225,19 @@ const ProductDetails = () => {
                         </div>
                     </div>
 
-                    <p className="pd-price">₹{product.price.toLocaleString("en-IN")}</p>
-
                     <p className="description">{product.description}</p>
 
                     {/* Actions */}
                     <div className="product-actions">
                         <button
                             className="pd-cart-btn"
+                            onClick={bookConsultancy}
+                        >
+                            Get Quote
+                        </button>
+                        
+                        <button
+                            className="pd-cart-btn pd-secondary-btn"
                             onClick={bookConsultancy}
                         >
                             Book Consultancy
@@ -223,28 +254,70 @@ const ProductDetails = () => {
                             }
                         </button>
 
-                        <button className="back" onClick={() => navigate(-1)}>
-                            Back
-                        </button>
                     </div>
                 </div>
             </div>
 
+            {/* ── Lightbox Modal ── */}
+            {isLightboxOpen && (
+                <div className="lightbox-overlay" onClick={() => setIsLightboxOpen(false)} aria-modal="true" role="dialog">
+                    <div className="lightbox-content" onClick={e => e.stopPropagation()}>
+                        <button className="lightbox-close" onClick={() => setIsLightboxOpen(false)} aria-label="Close image">×</button>
+                        <img src={product.image} alt={product.title} className="lightbox-image" />
+                    </div>
+                </div>
+            )}
+
             {/* ── Related Products ── */}
             {related.length > 0 && (
                 <div className="pd-related">
-                    <h2 className="pd-section-title">Related Designs</h2>
+                    <div className="pd-related-header">
+                        <h2 className="pd-section-title">Related Designs</h2>
+                        <span 
+                            className="pd-view-more-link"
+                            onClick={() => navigate(`/products/${product.category}`)}
+                        >
+                            View More &gt;
+                        </span>
+                    </div>
                     <div className="pd-related-grid">
                         {related.map((p) => (
                             <div
-                                className="pd-related-card"
+                                className="pd-related-card product-card"
                                 key={p.id}
-                                onClick={() => navigate(`/product/${p.id}`)}
                             >
-                                <img src={p.image} alt={p.title} />
-                                <div className="pd-related-info">
-                                    <h3>{p.title}</h3>
-                                    <p>₹{p.price.toLocaleString("en-IN")}</p>
+                                {/* Image */}
+                                <div className="product-image" onClick={() => navigate(`/product/${p.id}`)}>
+                                    <img src={p.image} alt={p.title} />
+                                    {p.popular && (
+                                        <span className="product-badge">Popular</span>
+                                    )}
+                                </div>
+
+                                {/* Info */}
+                                <div
+                                    className="product-info"
+                                    onClick={() => navigate(`/product/${p.id}`)}
+                                >
+                                    <h2>{p.title}</h2>
+                                    <p className="product-size">{p.size}</p>
+                                    <p className="product-material">{p.material}</p>
+                                </div>
+
+                                {/* Buttons */}
+                                <div className="product-buttons">
+                                    <button
+                                        className="quote"
+                                        onClick={() => navigate(`/?consultancy=true&product_id=${p.id}`)}
+                                    >
+                                        Get Quote
+                                    </button>
+                                    <button
+                                        className="view"
+                                        onClick={() => navigate(`/product/${p.id}`)}
+                                    >
+                                        View Details
+                                    </button>
                                 </div>
                             </div>
                         ))}

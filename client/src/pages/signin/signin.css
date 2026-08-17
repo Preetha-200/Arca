@@ -7,9 +7,10 @@
 }
 
 .signin-card {
-	width: 450px;
+	width: 100%;
+	max-width: 450px;
 	background: white;
-	padding: 40px;
+	padding: clamp(20px, 5vw, 40px);
 	border-radius: 15px;
 	box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 	display: flex;
@@ -19,7 +20,8 @@
 
 .signin-card h1 {
 	text-align: center;
-	letter-spacing: 12px;
+	letter-spacing: clamp(4px, 2vw, 12px);
+	margin-right: calc(-1 * clamp(4px, 2vw, 12px));
 	font-weight: lighter;
 }
 

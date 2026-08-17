@@ -44,9 +44,13 @@ const SearchOverlay = ({ user, onClose }) => {
   };
 
   return (
-    <div className="so-overlay">
-      {/* ── Top bar ── */}
+    <div className="so-overlay" onClick={onClose}>
+      <div className="so-container" onClick={(e) => e.stopPropagation()}>
+        {/* ── Top bar ── */}
       <div className="so-topbar">
+        <button className="so-cancel" onClick={onClose} aria-label="Back">
+          ←
+        </button>
         <div className="so-input-wrap">
           <span className="so-icon">⌕</span>
           <input
@@ -64,7 +68,6 @@ const SearchOverlay = ({ user, onClose }) => {
             </button>
           )}
         </div>
-        <button className="so-cancel" onClick={onClose}>Cancel</button>
       </div>
 
       {/* ── Content ── */}
@@ -98,29 +101,28 @@ const SearchOverlay = ({ user, onClose }) => {
                 {results.length > 0 && (
                   <div className="so-section">
                     <p className="so-section-title">Designs</p>
-                    {results.map((p) => (
-                      <div
-                        key={p.id}
-                        className="so-product-row"
-                        onMouseDown={() => goProduct(p)}
-                      >
-                        <img src={p.image} alt={p.title} />
-                        <div className="so-product-info">
-                          <span>{p.title}</span>
-                          <small>{p.roomType}</small>
+                    <div className="so-product-list">
+                      {results.map((p) => (
+                        <div
+                          key={p.id}
+                          className="so-product-row"
+                          onMouseDown={() => goProduct(p)}
+                        >
+                          <img src={p.image} alt={p.title} className="so-product-thumb" />
+                          <div className="so-product-info">
+                            <span className="so-product-name">{p.title}</span>
+                            <span className="so-product-meta">{p.roomType}</span>
+                          </div>
                         </div>
-                        <span className="so-product-price">
-                          ₹{p.price.toLocaleString("en-IN")}
-                        </span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
               </>
             )}
           </>
         ) : (
-          /* ── Idle: show history + trending + categories ── */
+          /* ── Idle: show history + trending + categories + recommended ── */
           <>
             {searches.length > 0 && (
               <div className="so-section">
@@ -144,16 +146,13 @@ const SearchOverlay = ({ user, onClose }) => {
             )}
 
             <div className="so-section">
-              <p className="so-section-title">Trending</p>
-              <div className="so-chips">
+              <p className="so-section-title">Trending Searches</p>
+              <div className="so-trending-grid">
                 {TRENDING.map((t) => (
-                  <button
-                    key={t}
-                    className="so-chip so-chip-trending"
-                    onMouseDown={() => goQuery(t)}
-                  >
-                    ↑ {t}
-                  </button>
+                  <div key={t} className="so-trending-item" onMouseDown={() => goQuery(t)}>
+                    <span className="so-trending-icon">↑</span>
+                    <span className="so-trending-text">{t}</span>
+                  </div>
                 ))}
               </div>
             </div>
@@ -172,8 +171,30 @@ const SearchOverlay = ({ user, onClose }) => {
                 ))}
               </div>
             </div>
+
+            {recommended.length > 0 && (
+              <div className="so-section">
+                <p className="so-section-title">Recommended</p>
+                <div className="so-product-list">
+                  {recommended.map((p) => (
+                    <div
+                      key={p.id}
+                      className="so-product-row"
+                      onMouseDown={() => goProduct(p)}
+                    >
+                      <img src={p.image} alt={p.title} className="so-product-thumb" />
+                      <div className="so-product-info">
+                        <span className="so-product-name">{p.title}</span>
+                        <span className="so-product-meta">{p.roomType}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </>
         )}
+      </div>
       </div>
     </div>
   );

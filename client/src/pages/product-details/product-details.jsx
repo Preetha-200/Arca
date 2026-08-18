@@ -200,6 +200,7 @@ const ProductDetails = () => {
                     {product.popular && (
                         <span className="pd-popular-badge">Popular Choice</span>
                     )}
+                    <h2 className="brand-name">ARCA</h2>
                     <h1>{product.title}</h1>
 
                     {/* Rating summary */}
